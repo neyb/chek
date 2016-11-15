@@ -7,8 +7,4 @@ interface Matcher<in T> {
 
     fun match(actual:T):Boolean
     fun assertionErrorMessage(actual:T):String
-
-    infix fun <Y:T>and(other:Matcher<Y>):Matcher<Y>{
-
-    }
 }

@@ -1,19 +1,55 @@
 package io.github.neyb.tchekik
 
-import io.github.neyb.tchekik.matcher.described
-import io.github.neyb.tchekik.matcher.equalsTo
+import io.github.neyb.tchekik.matcher.describedAs
 import org.jetbrains.spek.api.Spek
+import org.jetbrains.spek.api.dsl.*
+import kotlin.test.*
 
 class ShouldMatchTest : Spek({
-    test("test") {
-        "aaa" shouldMatch (equalsTo("aaa") and equalsTo("aaa"))
+    test("comparing to same should pass") {
+        "aaa" shouldMatch { it == "aaa" }
     }
 
-    test("test2") {
-        "aaa" shouldMatch described({"$it should have a size of 3"}) {it.length == 3} and
+    test("testing right length should pass") {
+        "aaa" shouldMatch { it.length == 3 }
     }
 
-    test("test3") {
-        "aa" shouldMatch described({"$it should have a size of 3 but has a size of ${it.length}"}) {it.length == 3}
+    given("a failing test without message") {
+        val failingTest = { "aa" shouldMatch { it.length == 3 } }
+
+        it("should throw assertionError") {
+            assertFailsWith<AssertionError> { failingTest() }
+        }
+
+        it("should throw the right message") {
+            val e = assertFails { failingTest() }
+            assertEquals(""""aa" should match a not described criteria""", e.message)
+        }
     }
+
+    given("a failing test with a message") {
+        val failingTest = {
+            "aa" shouldMatch ({ it: String -> it.length == 3 }
+                    describedAs "should have a size of 3")
+        }
+
+        it("should throw the right message") {
+            val e = assertFails { failingTest() }
+            assertEquals(""""aa" should have a size of 3""", e.message)
+        }
+    }
+
+    given("a failing test with a message & failure message") {
+        val failingTest = {
+            "aa" shouldMatch ({ it: String -> it.length == 3 }
+                    describedAs "should have a size of 3" but { "has a size of ${it.length}" })
+        }
+
+        it("should throw the right message") {
+            val e = assertFails { failingTest() }
+            assertEquals(""""aa" should have a size of 3 but has a size of 2""", e.message)
+        }
+    }
+
+
 })
