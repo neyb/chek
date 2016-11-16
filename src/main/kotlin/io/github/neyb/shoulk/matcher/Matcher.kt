@@ -1,4 +1,4 @@
-package io.github.neyb.tchekik.matcher
+package io.github.neyb.shoulk.matcher
 
 import com.sun.org.apache.xerces.internal.impl.xpath.regex.Match
 

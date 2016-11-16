@@ -1,7 +1,7 @@
-package io.github.neyb.tchekik
+package io.github.neyb.shoulk
 
-import io.github.neyb.tchekik.matcher.FluentMatcher
-import io.github.neyb.tchekik.matcher.Matcher
+import io.github.neyb.shoulk.matcher.FluentMatcher
+import io.github.neyb.shoulk.matcher.Matcher
 import kotlin.test.assertEquals
 import kotlin.test.fail
 

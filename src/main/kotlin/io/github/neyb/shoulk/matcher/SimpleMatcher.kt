@@ -1,4 +1,4 @@
-package io.github.neyb.tchekik.matcher
+package io.github.neyb.shoulk.matcher
 
 //fun <T> described(messageBuilder: (T) -> String, matcher: (T) -> Boolean) =
 //        SimpleMatcher(messageBuilder, matcher)

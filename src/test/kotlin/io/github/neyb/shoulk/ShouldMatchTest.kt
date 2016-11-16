@@ -1,6 +1,6 @@
-package io.github.neyb.tchekik
+package io.github.neyb.shoulk
 
-import io.github.neyb.tchekik.matcher.describedAs
+import io.github.neyb.shoulk.matcher.describedAs
 import org.jetbrains.spek.api.Spek
 import org.jetbrains.spek.api.dsl.*
 import kotlin.test.*
