@@ -2,8 +2,8 @@ package io.github.neyb.shoulk
 
 infix fun <T> ((T) -> Boolean).describedAs(description: String) = FluentMatcher(description, matcher = this)
 
-class FluentMatcher<T>(
-        private val description: String = "match a not described criteria",
+class FluentMatcher<T> internal constructor(
+        private val description: String,
         private val dismatchDescriptionBuilder: ((T) -> String)? = null,
         private val positive: Boolean = true,
         private val matcher: (T) -> Boolean

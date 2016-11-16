@@ -30,12 +30,25 @@ class ShouldsSpek : Spek({
         // but it is not a IllegalStateException
         val failing = { ArrayList<String>()[0] }
 
+        it("should pass `shouldThrow { okMatching } `") {
+            failing shouldThrow { e: IndexOutOfBoundsException -> e.message != null }
+        }
+
+        it("should pass `.shouldThrow<IndexOutOfBoundsException>{it.message != null}`") {
+            failing.shouldThrow<IndexOutOfBoundsException> { it.message != null }
+        }
+
+        it("should pass `.shouldThrow<IndexOutOfBoundsException>{it.message != null}`") {
+            failing.shouldThrow({ e: IndexOutOfBoundsException -> e.message != null } describedAs "have no message")
+        }
+
+        it("should pass `failing shouldThrow IndexOutOfBoundsException::class that { it.message != null }`") {
+            failing shouldThrow IndexOutOfBoundsException::class that { it.message != null }
+        }
         group("with predicate") {
             it("should pass if predicate returns true") {
                 failing shouldThrow { e: Throwable -> e is IndexOutOfBoundsException }
             }
-
-
 
 
         }
@@ -63,8 +76,8 @@ class ShouldsSpek : Spek({
                     }
 
                     it("should throw the right message") {
-                        val e = assertFails { failingTest() }
-                        assertEquals(""""aa" should match a not described criteria""", e.message)
+                        val failingMessage = assertFails { failingTest() }.message
+                        assertEquals(""""aa" does not match a not described criteria""", failingMessage)
                     }
                 }
 
@@ -75,29 +88,23 @@ class ShouldsSpek : Spek({
             }
 
             group("with fluent matcher") {
-                test("comparing to same should pass") {
-                    "aaa" shouldMatch FluentMatcher { it: String -> it == "aaa" }
+                it("is created with describedAs function") {
+                    "aaa" shouldMatch ({ it: String -> it.length == 3 } describedAs "have a size of 3")
                 }
 
-                given("a failing test with a message") {
-                    val failingTest = {
+                it("build the fail message for you") {
+                    val failMessage = assertFails {
                         "aa" shouldMatch ({ it: String -> it.length == 3 } describedAs "have a size of 3")
-                    }
-
-                    it("should throw the right message") {
-                        assertEquals(""""aa" should have a size of 3""", assertFails { failingTest() }.message)
-                    }
+                    }.message
+                    assertEquals("\"aa\" should have a size of 3", failMessage)
                 }
 
-                given("a failing test with a message & failure message") {
-                    val failingTest = {
-                        "aa" shouldMatch ({ it: String -> it.length == 3 } describedAs
-                                "have a size of 3" but { "has a size of ${it.length}" })
-                    }
-
-                    it("should throw the right message") {
-                        assertEquals(""""aa" should have a size of 3 but has a size of 2""", assertFails { failingTest() }.message)
-                    }
+                test("you can specify the error cause with `but` function") {
+                    val failMessage = assertFails {
+                        "aa" shouldMatch ({ it: String -> it.length == 3 }
+                                describedAs "have a size of 3" but { "has a size of ${it.length}" })
+                    }.message
+                    assertEquals("\"aa\" should have a size of 3 but has a size of 2", failMessage)
                 }
             }
 
