@@ -9,10 +9,6 @@ class ShouldThrowSpek : Spek({
     given("a function throwing an illegalstateexception") {
         val failing = { ArrayList<String>().get(0) }
 
-        it("should pass `shouldThrow okMatcher`") {
-            failing shouldThrow { e: Exception -> e is IndexOutOfBoundsException }
-        }
-
         it("should pass `shouldThrow { okMatching } `") {
             failing shouldThrow { e: IndexOutOfBoundsException -> e.message != null }
         }
