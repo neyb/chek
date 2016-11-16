@@ -1,4 +1,4 @@
-group 'tchkik'
+group 'shoulk'
 version '1.0-SNAPSHOT'
 
 task wrapper(type: Wrapper) {
