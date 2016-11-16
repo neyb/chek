@@ -1,4 +1,4 @@
-package io.github.neyb.shoulk.matcher
+package io.github.neyb.shoulk
 
 infix fun <T> ((T)->Boolean).describedAs(description: String) = FluentMatcher(this, description)
 
@@ -13,9 +13,9 @@ class FluentMatcher<T>(
             if (dismatchDescriptionBuilder == null) expectedDescription(actual)
             else "${expectedDescription(actual)} but ${dismatchDescription(actual, dismatchDescriptionBuilder)}"
 
+    infix fun but(dismatchDescriptionBuilder: ((T) -> String)) = FluentMatcher(matcher, description, dismatchDescriptionBuilder)
+
     private fun expectedDescription(actual: T) = """"$actual" $description"""
 
     private fun dismatchDescription(actual: T, dismatchDescriptionBuilder: (T) -> String) = dismatchDescriptionBuilder.invoke(actual)
-
-    infix fun but(dismatchDescriptionBuilder: ((T) -> String)) = FluentMatcher(matcher, description, dismatchDescriptionBuilder)
 }

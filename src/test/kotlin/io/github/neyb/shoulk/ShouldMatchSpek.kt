@@ -1,11 +1,12 @@
 package io.github.neyb.shoulk
 
-import io.github.neyb.shoulk.matcher.describedAs
+import io.github.neyb.shoulk.describedAs
 import org.jetbrains.spek.api.Spek
-import org.jetbrains.spek.api.dsl.*
+import org.jetbrains.spek.api.dsl.given
+import org.jetbrains.spek.api.dsl.it
 import kotlin.test.*
 
-class ShouldMatchTest : Spek({
+class ShouldMatchSpek : Spek({
     test("comparing to same should pass") {
         "aaa" shouldMatch { it == "aaa" }
     }
@@ -29,27 +30,23 @@ class ShouldMatchTest : Spek({
 
     given("a failing test with a message") {
         val failingTest = {
-            "aa" shouldMatch ({ it: String -> it.length == 3 }
-                    describedAs "should have a size of 3")
+            "aa" shouldMatch ({ it: String -> it.length == 3 } describedAs "should have a size of 3")
         }
 
         it("should throw the right message") {
-            val e = assertFails { failingTest() }
-            assertEquals(""""aa" should have a size of 3""", e.message)
+            assertEquals(""""aa" should have a size of 3""", assertFails { failingTest() }.message)
         }
     }
 
     given("a failing test with a message & failure message") {
         val failingTest = {
-            "aa" shouldMatch ({ it: String -> it.length == 3 }
-                    describedAs "should have a size of 3" but { "has a size of ${it.length}" })
+            "aa" shouldMatch ({ it: String -> it.length == 3 } describedAs
+                    "should have a size of 3" but { "has a size of ${it.length}" })
         }
 
         it("should throw the right message") {
-            val e = assertFails { failingTest() }
-            assertEquals(""""aa" should have a size of 3 but has a size of 2""", e.message)
+            assertEquals(""""aa" should have a size of 3 but has a size of 2""", assertFails { failingTest() }.message)
         }
     }
-
 
 })

@@ -1,6 +1,4 @@
-package io.github.neyb.shoulk.matcher
-
-import com.sun.org.apache.xerces.internal.impl.xpath.regex.Match
+package io.github.neyb.shoulk
 
 interface Matcher<in T> {
     companion object Factory
