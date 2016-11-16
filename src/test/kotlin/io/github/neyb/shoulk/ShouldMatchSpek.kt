@@ -1,6 +1,5 @@
 package io.github.neyb.shoulk
 
-import io.github.neyb.shoulk.describedAs
 import org.jetbrains.spek.api.Spek
 import org.jetbrains.spek.api.dsl.given
 import org.jetbrains.spek.api.dsl.it
@@ -13,6 +12,10 @@ class ShouldMatchSpek : Spek({
 
     test("testing right length should pass") {
         "aaa" shouldMatch { it.length == 3 }
+    }
+
+    test("testing not something false should pass") {
+        "aaa" shouldMatch !({ it: String -> it.length == 2 } describedAs "have a size of 2")
     }
 
     given("a failing test without message") {
@@ -30,7 +33,7 @@ class ShouldMatchSpek : Spek({
 
     given("a failing test with a message") {
         val failingTest = {
-            "aa" shouldMatch ({ it: String -> it.length == 3 } describedAs "should have a size of 3")
+            "aa" shouldMatch ({ it: String -> it.length == 3 } describedAs "have a size of 3")
         }
 
         it("should throw the right message") {
@@ -41,7 +44,7 @@ class ShouldMatchSpek : Spek({
     given("a failing test with a message & failure message") {
         val failingTest = {
             "aa" shouldMatch ({ it: String -> it.length == 3 } describedAs
-                    "should have a size of 3" but { "has a size of ${it.length}" })
+                    "have a size of 3" but { "has a size of ${it.length}" })
         }
 
         it("should throw the right message") {
