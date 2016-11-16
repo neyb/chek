@@ -1,0 +1,9 @@
+language: java
+
+jdk:
+    - oraclejdk8
+
+script:
+  - gradle wrapper
+  - chmod +x gradlew
+  - gradlew check
