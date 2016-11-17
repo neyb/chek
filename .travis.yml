@@ -4,8 +4,8 @@ jdk:
   - oraclejdk8
 
 before_install:
-  # Download desired version of Gradle
-  - wget http://downloads.gradle.org/distributions/gradle-3.2-bin.zip
-  - unzip -qq gradle-3.2-bin.zip
-  - export GRADLE_HOME=$PWD/gradle-3.2
+  - gradleVersion=3.2
+  - wget http://downloads.gradle.org/distributions/gradle-$gradleVersion-bin.zip
+  - unzip -qq gradle-$gradleVersion-bin.zip
+  - export GRADLE_HOME=$PWD/gradle-$gradleVersion
   - export PATH=$GRADLE_HOME/bin:$PATH
