@@ -4,15 +4,20 @@ import kotlin.reflect.KClass
 import kotlin.test.assertFailsWith
 
 infix fun <T> T.shouldEqual(expected: T) = shouldMatch(equalsTo(expected))
+infix fun <T> T.shouldNotEqual(expected: T) = shouldMatch(!equalsTo(expected))
+
+infix fun <T> T.shouldBe(expected: T) = shouldMatch(sameAs(expected))
+infix fun <T> T.shouldNotBe(expected: T) = shouldMatch(!sameAs(expected))
+
 
 @Suppress("UNUSED_PARAMETER") // for infix code
 infix inline fun <reified E : Throwable> (() -> Any).shouldThrow(expectedType: KClass<E>) =
         assertFailsWith<E> { this() }
+infix fun <E : Throwable> E.that(predicate: (E) -> Boolean) = shouldMatch(predicate)
 infix fun <E : Throwable> E.that(matcher: Matcher<E>) = shouldMatch(matcher)
-infix fun <E : Throwable> E.that(matcher: (E) -> Boolean) = shouldMatch(matcher)
 
-infix inline fun <reified T : Throwable> (() -> Any).shouldThrow(noinline matcher: (T) -> Boolean) =
-        assertFailsWith<T> { this() } shouldMatch matcher
+infix inline fun <reified T : Throwable> (() -> Any).shouldThrow(noinline predicate: (T) -> Boolean) =
+        assertFailsWith<T> { this() } shouldMatch predicate
 
 infix inline fun <reified T : Throwable> (() -> Any).shouldThrow(matcher: Matcher<T>) =
         assertFailsWith<T> { this() } shouldMatch matcher

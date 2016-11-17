@@ -9,58 +9,111 @@ import kotlin.test.*
 class ShouldsSpek : Spek({
 
     group("basics expectation") {
-        group("shouldEqual") {
-            test("aaa should equals aaa") {
-                "aaa" shouldEqual "aaa"
+        group("testing equality") {
+            group("shouldEqual") {
+                test("aaa should equals aaa") {
+                    "aaa" shouldEqual "aaa"
+                }
+
+                it("fails with right exception") {
+                    val failMessage = assertFailsWith<AssertionError> {
+                        "aaa" shouldEqual "bbb"
+                    }.message
+                    assertEquals(""""aaa" should be equals to "bbb"""", failMessage)
+                }
             }
 
-            test("aaa shouldEqual bbb throw exception") {
-                val failMessage = assertFailsWith<AssertionError> {
-                    "aaa" shouldEqual "bbb"
-                }.message
-                assertEquals(""""aaa" should be equals to "bbb"""", failMessage)
-            }
+            group("shouldNotEquals") {
+                test("aaa should equals aaa") {
+                    "aaa" shouldNotEqual "bbb"
+                }
 
-        }
-
-        group("shouldNotEquals") { }
-        group("shouldBe") { }
-        group("shouldNotBe") { }
-        group("shouldContain") { }
-        group("shouldNotContain") { }
-    }
-
-    group("shouldThrow") {
-        // throw a ArrayIndexOutOfBoundsException which extends IndexOutOfBoundsException
-        // but it is not a IllegalStateException
-        val failing = { ArrayList<String>()[0] }
-
-        group("allow to test exception type") {
-            test("passing test") {
-                failing shouldThrow IndexOutOfBoundsException::class
-            }
-
-            test("failing test got right message") { }
-        }
-        group("with message") { }
-        group("with predicate") {
-            it("passing test") {
-                failing shouldThrow IndexOutOfBoundsException::class that { it.message != null }
-            }
-
-            test("other passing test") { // same as above, another syntax
-                failing shouldThrow { e: IndexOutOfBoundsException -> e.message != null }
-            }
-
-            it("and another passing test") { // still same effect, another syntax
-                failing.shouldThrow<IndexOutOfBoundsException> { it.message != null }
+                it("fails with right exception") {
+                    val failMessage = assertFailsWith<AssertionError> {
+                        "aaa" shouldNotEqual "aaa"
+                    }.message
+                    assertEquals(""""aaa" should not be equals to "aaa"""", failMessage)
+                }
             }
         }
 
-        group("with matcher") {
-            it("should pass `.shouldThrow<IndexOutOfBoundsException>{it.message != null}`") {
-                failing.shouldThrow({ e: IndexOutOfBoundsException -> e.message != null }
-                        describedAs "have no message")
+        group("testing identity") {
+            val o1 = "dog"
+            val o2 = o1
+            val o3 = "cat"
+
+            group("shouldBe") {
+
+                test("o2 should be o1") {
+                    o2 shouldBe o1
+                }
+
+                it("fails with right message") {
+                    val failMessage = assertFails {
+                        o1 shouldBe o3
+                    }.message
+
+                    assertTrue(failMessage
+                            ?.matches(Regex(""""dog" should be the same object as "cat"@\d+ but its identity hashCode is @\d+"""))
+                            ?: false)
+                }
+            }
+
+            group("shouldNotBe") {
+                test("o1 should not be o3") {
+                    o1 shouldNotBe o3
+                }
+
+                it("fails with right message") {
+                    val failMessage = assertFails {
+                        o1 shouldNotBe o2
+                    }.message
+
+                    assertFalse(failMessage
+                            ?.matches(Regex(""""dog" should be the same object as "cat"@\d+ but its identity hashCode is @\d+"""))
+                            ?: true)
+                }
+            }
+        }
+
+        group("testing collection") {
+            group("shouldContain") { }
+            group("shouldNotContain") { }
+        }
+
+        group("testing exception") {
+            group("shouldThrow") {
+                // throw a ArrayIndexOutOfBoundsException which extends IndexOutOfBoundsException
+                // but it is not a IllegalStateException
+                val failing = { ArrayList<String>()[0] }
+
+                group("allow to test exception type") {
+                    test("passing test") {
+                        failing shouldThrow IndexOutOfBoundsException::class
+                    }
+
+                    test("failing test got right message") { }
+                }
+                group("with message") { }
+                group("with predicate") {
+                    it("passing test") {
+                        failing shouldThrow IndexOutOfBoundsException::class that { it.message != null }
+                    }
+
+                    test("other passing test") { // same as above, another syntax
+                        failing shouldThrow { e: IndexOutOfBoundsException -> e.message != null }
+                    }
+
+                    it("and another passing test") { // still same effect, another syntax
+                        failing.shouldThrow<IndexOutOfBoundsException> { it.message != null }
+                    }
+                }
+                group("with matcher") {
+                    it("should pass `.shouldThrow<IndexOutOfBoundsException>{it.message != null}`") {
+                        failing shouldThrow ({ e: IndexOutOfBoundsException -> e.message != null }
+                                describedAs "have no message")
+                    }
+                }
             }
         }
     }
@@ -104,7 +157,7 @@ class ShouldsSpek : Spek({
                     val failMessage = assertFails {
                         "aa" shouldMatch ({ it: String -> it.length == 3 } describedAs "have a size of 3")
                     }.message
-                    assertEquals("\"aa\" should have a size of 3", failMessage)
+                    assertEquals(""""aa" should have a size of 3""", failMessage)
                 }
 
                 test("you can specify the error cause with `but` function") {
@@ -112,7 +165,7 @@ class ShouldsSpek : Spek({
                         "aa" shouldMatch ({ it: String -> it.length == 3 }
                                 describedAs "have a size of 3" but { "has a size of ${it.length}" })
                     }.message
-                    assertEquals("\"aa\" should have a size of 3 but has a size of 2", failMessage)
+                    assertEquals(""""aa" should have a size of 3 but has a size of 2""", failMessage)
                 }
             }
 
