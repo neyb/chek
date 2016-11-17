@@ -3,7 +3,7 @@ package io.github.neyb.shoulk
 import kotlin.reflect.KClass
 import kotlin.test.assertFailsWith
 
-infix fun <T> T.shouldEquals(expected: T) = shouldMatch(equalsTo(expected))
+infix fun <T> T.shouldEqual(expected: T) = shouldMatch(equalsTo(expected))
 
 @Suppress("UNUSED_PARAMETER") // for infix code
 infix inline fun <reified E : Throwable> (() -> Any).shouldThrow(expectedType: KClass<E>) =

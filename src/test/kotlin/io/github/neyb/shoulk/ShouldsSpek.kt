@@ -9,20 +9,25 @@ import kotlin.test.*
 class ShouldsSpek : Spek({
 
     group("basics expectation") {
-        group("shouldEquals") {
+        group("shouldEqual") {
             test("aaa should equals aaa") {
-                "aaa" shouldEquals "aaa"
+                "aaa" shouldEqual "aaa"
             }
 
             test("aaa shouldEqual bbb throw exception") {
                 val failMessage = assertFailsWith<AssertionError> {
-                    "aaa" shouldEquals "bbb"
+                    "aaa" shouldEqual "bbb"
                 }.message
                 assertEquals(""""aaa" should be equals to "bbb"""", failMessage)
             }
 
         }
 
+        group("shouldNotEquals") { }
+        group("shouldBe") { }
+        group("shouldNotBe") { }
+        group("shouldContain") { }
+        group("shouldNotContain") { }
     }
 
     group("shouldThrow") {
@@ -30,31 +35,34 @@ class ShouldsSpek : Spek({
         // but it is not a IllegalStateException
         val failing = { ArrayList<String>()[0] }
 
-        it("should pass `shouldThrow { okMatching } `") {
-            failing shouldThrow { e: IndexOutOfBoundsException -> e.message != null }
-        }
-
-        it("should pass `.shouldThrow<IndexOutOfBoundsException>{it.message != null}`") {
-            failing.shouldThrow<IndexOutOfBoundsException> { it.message != null }
-        }
-
-        it("should pass `.shouldThrow<IndexOutOfBoundsException>{it.message != null}`") {
-            failing.shouldThrow({ e: IndexOutOfBoundsException -> e.message != null } describedAs "have no message")
-        }
-
-        it("should pass `failing shouldThrow IndexOutOfBoundsException::class that { it.message != null }`") {
-            failing shouldThrow IndexOutOfBoundsException::class that { it.message != null }
-        }
-        group("with predicate") {
-            it("should pass if predicate returns true") {
-                failing shouldThrow { e: Throwable -> e is IndexOutOfBoundsException }
+        group("allow to test exception type") {
+            test("passing test") {
+                failing shouldThrow IndexOutOfBoundsException::class
             }
 
-
+            test("failing test got right message") { }
         }
-        group("with matcher") { }
-        group("with expected Throwable class") { }
+        group("with message") { }
+        group("with predicate") {
+            it("passing test") {
+                failing shouldThrow IndexOutOfBoundsException::class that { it.message != null }
+            }
 
+            test("other passing test") { // same as above, another syntax
+                failing shouldThrow { e: IndexOutOfBoundsException -> e.message != null }
+            }
+
+            it("and another passing test") { // still same effect, another syntax
+                failing.shouldThrow<IndexOutOfBoundsException> { it.message != null }
+            }
+        }
+
+        group("with matcher") {
+            it("should pass `.shouldThrow<IndexOutOfBoundsException>{it.message != null}`") {
+                failing.shouldThrow({ e: IndexOutOfBoundsException -> e.message != null }
+                        describedAs "have no message")
+            }
+        }
     }
 
     group("generic matching") {
