@@ -1,5 +1,6 @@
 package io.github.neyb.shoulk
 
+import io.github.neyb.shoulk.Matcher.*
 import org.jetbrains.spek.api.Spek
 import org.jetbrains.spek.api.dsl.given
 import org.jetbrains.spek.api.dsl.it
@@ -11,28 +12,28 @@ class ShouldsSpek : Spek({
     group("basics expectation") {
         group("testing equality") {
             group("shouldEqual") {
-                test("aaa should equals aaa") {
-                    "aaa" shouldEqual "aaa"
+                test("dog should equals dog") {
+                    "dog" shouldEqual "dog"
                 }
 
                 it("fails with right exception") {
                     val failMessage = assertFailsWith<AssertionError> {
-                        "aaa" shouldEqual "bbb"
+                        "dog" shouldEqual "cat"
                     }.message
-                    assertEquals(""""aaa" should be equals to "bbb"""", failMessage)
+                    assertEquals(""""dog" should be equals to "cat"""", failMessage)
                 }
             }
 
             group("shouldNotEquals") {
-                test("aaa should equals aaa") {
-                    "aaa" shouldNotEqual "bbb"
+                test("dog should Not equals cat") {
+                    "dog" shouldNotEqual "cat"
                 }
 
                 it("fails with right exception") {
                     val failMessage = assertFailsWith<AssertionError> {
-                        "aaa" shouldNotEqual "aaa"
+                        "dog" shouldNotEqual "dog"
                     }.message
-                    assertEquals(""""aaa" should not be equals to "aaa"""", failMessage)
+                    assertEquals(""""dog" should not be equals to "dog"""", failMessage)
                 }
             }
         }
@@ -76,9 +77,34 @@ class ShouldsSpek : Spek({
             }
         }
 
-        group("testing collection") {
-            group("shouldContain") { }
-            group("shouldNotContain") { }
+        group("testing collection (actually its based on iterable)") {
+            val list = listOf("cat", "dog")
+
+            group("shouldContain") {
+                test("list should contain cat") {
+                    list shouldContain "cat"
+                }
+
+                it("fails with right exception") {
+                    val failMessage = assertFails {
+                        list shouldContain "kitty"
+                    }.message
+                    assertEquals(""""[cat, dog]" should contain "kitty"""", failMessage)
+                }
+            }
+
+            group("shouldNotContain") {
+                test("list should not contain kitty") {
+                    list shouldNotContain "kitty"
+                }
+
+                it("fails with right exception") {
+                    val failMessage = assertFails {
+                        list shouldNotContain "cat"
+                    }.message
+                    assertEquals(""""[cat, dog]" should not contain "cat"""", failMessage)
+                }
+            }
         }
 
         group("testing exception") {
@@ -122,15 +148,15 @@ class ShouldsSpek : Spek({
         group("shouldMatch") {
             group("with predicate") {
                 test("comparing to same should pass") {
-                    "aaa" shouldMatch { it == "aaa" }
+                    "dog" shouldMatch { it == "dog" }
                 }
 
                 test("testing right length should pass") {
-                    "aaa" shouldMatch { it.length == 3 }
+                    "dog" shouldMatch { it.length == 3 }
                 }
 
                 given("a failing test without message") {
-                    val failingTest = { "aa" shouldMatch { it.length == 3 } }
+                    val failingTest = { "kitty" shouldMatch { it.length == 3 } }
 
                     it("should throw assertionError") {
                         assertFailsWith<AssertionError> { failingTest() }
@@ -138,34 +164,34 @@ class ShouldsSpek : Spek({
 
                     it("should throw the right message") {
                         val failingMessage = assertFails { failingTest() }.message
-                        assertEquals(""""aa" does not match a not described criteria""", failingMessage)
+                        assertEquals(""""kitty" does not match a not described criteria""", failingMessage)
                     }
                 }
 
             }
 
             group("with predifined matchers") {
-                "aaa" shouldMatch equalsTo("aaa")
+                "dog" shouldMatch equalsTo("dog")
             }
 
             group("with fluent matcher") {
                 it("is created with describedAs function") {
-                    "aaa" shouldMatch ({ it: String -> it.length == 3 } describedAs "have a size of 3")
+                    "dog" shouldMatch ({ it: String -> it.length == 3 } describedAs "have a size of 3")
                 }
 
                 it("build the fail message for you") {
                     val failMessage = assertFails {
-                        "aa" shouldMatch ({ it: String -> it.length == 3 } describedAs "have a size of 3")
+                        "kitty" shouldMatch ({ it: String -> it.length == 3 } describedAs "have a size of 3")
                     }.message
-                    assertEquals(""""aa" should have a size of 3""", failMessage)
+                    assertEquals(""""kitty" should have a size of 3""", failMessage)
                 }
 
                 test("you can specify the error cause with `but` function") {
                     val failMessage = assertFails {
-                        "aa" shouldMatch ({ it: String -> it.length == 3 }
+                        "kitty" shouldMatch ({ it: String -> it.length == 3 }
                                 describedAs "have a size of 3" but { "has a size of ${it.length}" })
                     }.message
-                    assertEquals(""""aa" should have a size of 3 but has a size of 2""", failMessage)
+                    assertEquals(""""kitty" should have a size of 3 but has a size of 5""", failMessage)
                 }
             }
 
@@ -176,12 +202,12 @@ class ShouldsSpek : Spek({
                 }
 
                 it("it can pass") {
-                    "aaa" shouldMatch SizeOf(3)
+                    "dog" shouldMatch SizeOf(3)
                 }
 
                 it("it can fail with your message") {
-                    val failMessage = assertFails { "aaa" shouldMatch SizeOf(2) }.message
-                    assertEquals("aaa has not a size of 2", failMessage)
+                    val failMessage = assertFails { "dog" shouldMatch SizeOf(2) }.message
+                    assertEquals("dog has not a size of 2", failMessage)
                 }
 
             }

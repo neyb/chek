@@ -1,4 +1,4 @@
-package io.github.neyb.shoulk
+package io.github.neyb.shoulk.Matcher
 
 internal class PredicateMatcher<T> (private val matcher:(T)->Boolean) : Matcher<T> {
     override fun match(actual: T) = matcher(actual)

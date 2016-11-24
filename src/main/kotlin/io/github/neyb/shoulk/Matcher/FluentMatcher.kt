@@ -1,4 +1,4 @@
-package io.github.neyb.shoulk
+package io.github.neyb.shoulk.Matcher
 
 infix fun <T> ((T) -> Boolean).describedAs(description: String) = FluentMatcher(description, matcher = this)
 

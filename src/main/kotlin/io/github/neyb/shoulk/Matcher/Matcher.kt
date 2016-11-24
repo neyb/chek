@@ -1,4 +1,4 @@
-package io.github.neyb.shoulk
+package io.github.neyb.shoulk.Matcher
 
 interface Matcher<in T> {
     fun match(actual: T): Boolean
