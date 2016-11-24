@@ -4,14 +4,18 @@ import io.github.neyb.shoulk.Matcher.*
 import kotlin.reflect.KClass
 import kotlin.test.assertFailsWith
 
-infix fun <T> T.shouldEqual(expected: T) = shouldMatch(equalsTo(expected))
-infix fun <T> T.shouldNotEqual(expected: T) = shouldMatch(!equalsTo(expected))
+infix fun <T> T.shouldEqual(expected: T) = shouldMatch(equalTo(expected))
+infix fun <T> T.shouldNotEqual(expected: T) = shouldMatch(!equalTo(expected))
 
 infix fun <T> T.shouldBe(expected: T) = shouldMatch(sameAs(expected))
 infix fun <T> T.shouldNotBe(expected: T) = shouldMatch(!sameAs(expected))
 
-infix fun <T> Iterable<T>.shouldContain(expected: T) = shouldMatch(io.github.neyb.shoulk.Matcher.contains(expected))
-infix fun <T> Iterable<T>.shouldNotContain(expected: T) = shouldMatch(!io.github.neyb.shoulk.Matcher.contains(expected))
+infix fun <T> Iterable<T>.shouldContain(expected: T) = shouldMatch(contain(expected))
+infix fun <T> Iterable<T>.shouldNotContain(expected: T) = shouldMatch(!contain(expected))
+
+infix fun <T> Iterable<T>.anyShouldMatch(matcher: Matcher<T>) = shouldMatch(anyMatch(matcher))
+infix fun <T> Iterable<T>.noneShouldMatch(matcher: Matcher<T>) = shouldMatch(anyMatch(matcher))
+infix fun <T> Iterable<T>.allShouldMatch(matcher: Matcher<T>) = shouldMatch(!anyMatch(matcher))
 
 @Suppress("UNUSED_PARAMETER") // for infix code
 infix inline fun <reified E : Throwable> (() -> Any).shouldThrow(expectedType: KClass<E>) =

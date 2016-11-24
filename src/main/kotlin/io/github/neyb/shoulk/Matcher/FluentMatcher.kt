@@ -3,7 +3,7 @@ package io.github.neyb.shoulk.Matcher
 infix fun <T> ((T) -> Boolean).describedAs(description: String) = FluentMatcher(description, matcher = this)
 
 class FluentMatcher<T> internal constructor(
-        private val description: String,
+        override val description: String,
         private val dismatchDescriptionBuilder: ((T) -> String)? = null,
         private val positive: Boolean = true,
         private val matcher: (T) -> Boolean

@@ -1,5 +1,6 @@
 package io.github.neyb.shoulk
 
+import com.sun.org.glassfish.gmbal.Description
 import io.github.neyb.shoulk.Matcher.*
 import org.jetbrains.spek.api.Spek
 import org.jetbrains.spek.api.dsl.given
@@ -92,7 +93,6 @@ class ShouldsSpek : Spek({
                     assertEquals(""""[cat, dog]" should contain "kitty"""", failMessage)
                 }
             }
-
             group("shouldNotContain") {
                 test("list should not contain kitty") {
                     list shouldNotContain "kitty"
@@ -105,6 +105,12 @@ class ShouldsSpek : Spek({
                     assertEquals(""""[cat, dog]" should not contain "cat"""", failMessage)
                 }
             }
+            group("shouldContainAny") { }
+            group("shouldContainAll") { }
+            group("any match") { }
+            group("match in order") { }
+            group("all match") { }
+            group("none match") { }
         }
 
         group("testing exception") {
@@ -171,7 +177,7 @@ class ShouldsSpek : Spek({
             }
 
             group("with predifined matchers") {
-                "dog" shouldMatch equalsTo("dog")
+                "dog" shouldMatch equalTo("dog")
             }
 
             group("with fluent matcher") {
@@ -197,6 +203,7 @@ class ShouldsSpek : Spek({
 
             group("with your own matcher") {
                 class SizeOf(private val expectedSize: Int) : Matcher<String> {
+                    override val description = "has a size of $expectedSize"
                     override fun match(actual: String) = actual.length == expectedSize
                     override fun getDismatchDescriptionFor(actual: String) = "$actual has not a size of $expectedSize"
                 }
