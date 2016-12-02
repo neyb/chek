@@ -1,6 +1,6 @@
 package io.github.neyb.shoulk.Matcher
 
-infix fun <T> ((T) -> Boolean).describedAs(description: String) = FluentMatcher(description, matcher = this)
+fun <T> match(description: String, matcher: (T) -> Boolean) = FluentMatcher(description, matcher = matcher)
 
 class FluentMatcher<T> internal constructor(
         override val description: String,
@@ -19,7 +19,7 @@ class FluentMatcher<T> internal constructor(
 
     operator fun not() = FluentMatcher(description, dismatchDescriptionBuilder, !positive, { actual -> !matcher.invoke(actual) })
 
-    private fun expectedDescription(actual: T) = """"$actual" ${if(positive) "should" else "should not"} $description"""
+    private fun expectedDescription(actual: T) = """"$actual" ${if (positive) "should" else "should not"} $description"""
 
     private fun dismatchDescription(actual: T, dismatchDescriptionBuilder: (T) -> String) = dismatchDescriptionBuilder.invoke(actual)
 }

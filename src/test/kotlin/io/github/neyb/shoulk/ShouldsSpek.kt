@@ -1,6 +1,5 @@
 package io.github.neyb.shoulk
 
-import com.sun.org.glassfish.gmbal.Description
 import io.github.neyb.shoulk.Matcher.*
 import org.jetbrains.spek.api.Spek
 import org.jetbrains.spek.api.dsl.given
@@ -55,6 +54,8 @@ class ShouldsSpek : Spek({
                         o1 shouldBe o3
                     }.message
 
+                    failMessage should match { it?.matches(Regex(""""dog" should be the same object as "cat"@\d+ but its identity hashCode is @\d+""")) ?: false }
+
                     assertTrue(failMessage
                             ?.matches(Regex(""""dog" should be the same object as "cat"@\d+ but its identity hashCode is @\d+"""))
                             ?: false)
@@ -107,10 +108,36 @@ class ShouldsSpek : Spek({
             }
             group("shouldContainAny") { }
             group("shouldContainAll") { }
-            group("any match") { }
-            group("match in order") { }
-            group("all match") { }
-            group("none match") { }
+
+            group("generic matching") {
+                group("any match") {
+                    test("list shouldContain beginning with c") {
+                        list shouldContain match { it[0] == 'c' }
+                    }
+
+                    it("fails with right exception") {
+                        val failMessage = assertFails {
+                            list shouldContain match("start with a z") { it[0] == 'z' }
+                        }.message
+                        assertEquals(""""[cat, dog]" should contain an element matching "start with a z"""", failMessage)
+                    }
+
+                    it("fails with right exception") {
+                        val failMessage = assertFails {
+                            list shouldContain match("start with a z") { it[0] == 'z' }
+                        }.message
+                        assertEquals(""""[cat, dog]" should contain an element matching "start with a z"""", failMessage)
+                    }
+                }
+                group("match in order") {
+//                    list matchMatchInOrder listOf(
+//                            match("start with a c") { s: String -> s[0] == 'c' },
+//                            match("start with a d") { s: String -> s[0] == 'd' })
+                }
+                group("match in any order") { }
+                group("all match") { }
+                group("none match") { }
+            }
         }
 
         group("testing exception") {
@@ -127,23 +154,11 @@ class ShouldsSpek : Spek({
                     test("failing test got right message") { }
                 }
                 group("with message") { }
-                group("with predicate") {
-                    it("passing test") {
-                        failing shouldThrow IndexOutOfBoundsException::class that { it.message != null }
-                    }
 
-                    test("other passing test") { // same as above, another syntax
-                        failing shouldThrow { e: IndexOutOfBoundsException -> e.message != null }
-                    }
-
-                    it("and another passing test") { // still same effect, another syntax
-                        failing.shouldThrow<IndexOutOfBoundsException> { it.message != null }
-                    }
-                }
                 group("with matcher") {
                     it("should pass `.shouldThrow<IndexOutOfBoundsException>{it.message != null}`") {
-                        failing shouldThrow ({ e: IndexOutOfBoundsException -> e.message != null }
-                                describedAs "have no message")
+                        failing shouldThrow IndexOutOfBoundsException::class that
+                                match("have no message") { it.message != null }
                     }
                 }
             }
@@ -151,18 +166,18 @@ class ShouldsSpek : Spek({
     }
 
     group("generic matching") {
-        group("shouldMatch") {
+        group("should") {
             group("with predicate") {
                 test("comparing to same should pass") {
-                    "dog" shouldMatch { it == "dog" }
+                    "dog" should match { it == "dog" }
                 }
 
                 test("testing right length should pass") {
-                    "dog" shouldMatch { it.length == 3 }
+                    "dog" should match { it.length == 3 }
                 }
 
                 given("a failing test without message") {
-                    val failingTest = { "kitty" shouldMatch { it.length == 3 } }
+                    val failingTest = { "kitty" should match { it.length == 3 } }
 
                     it("should throw assertionError") {
                         assertFailsWith<AssertionError> { failingTest() }
@@ -177,47 +192,51 @@ class ShouldsSpek : Spek({
             }
 
             group("with predifined matchers") {
-                "dog" shouldMatch equalTo("dog")
+                "dog" should equal("dog")
             }
 
             group("with fluent matcher") {
                 it("is created with describedAs function") {
-                    "dog" shouldMatch ({ it: String -> it.length == 3 } describedAs "have a size of 3")
+                    "dog" should match("have a size of 3") { it.length == 3 }
                 }
 
                 it("build the fail message for you") {
                     val failMessage = assertFails {
-                        "kitty" shouldMatch ({ it: String -> it.length == 3 } describedAs "have a size of 3")
+                        "kitty" should match("have a size of 3") { it.length == 3 }
                     }.message
                     assertEquals(""""kitty" should have a size of 3""", failMessage)
                 }
 
                 test("you can specify the error cause with `but` function") {
                     val failMessage = assertFails {
-                        "kitty" shouldMatch ({ it: String -> it.length == 3 }
-                                describedAs "have a size of 3" but { "has a size of ${it.length}" })
+                        "kitty" should (match<String>("have a size of 3") { it.length == 3 }
+                                but { "has a size of ${it.length}" })
                     }.message
                     assertEquals(""""kitty" should have a size of 3 but has a size of 5""", failMessage)
                 }
             }
 
             group("with your own matcher") {
-                class SizeOf(private val expectedSize: Int) : Matcher<String> {
+                class SizeOfMatcher(private val expectedSize: Int) : Matcher<String> {
                     override val description = "has a size of $expectedSize"
                     override fun match(actual: String) = actual.length == expectedSize
                     override fun getDismatchDescriptionFor(actual: String) = "$actual has not a size of $expectedSize"
                 }
 
                 it("it can pass") {
-                    "dog" shouldMatch SizeOf(3)
+                    "dog" should SizeOfMatcher(3)
                 }
 
                 it("it can fail with your message") {
-                    val failMessage = assertFails { "dog" shouldMatch SizeOf(2) }.message
+                    val failMessage = assertFails { "dog" should SizeOfMatcher(2) }.message
                     assertEquals("dog has not a size of 2", failMessage)
                 }
 
             }
+        }
+
+        group("generic list treatment") {
+
         }
     }
 
