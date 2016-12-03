@@ -1,7 +1,7 @@
 package io.github.neyb.shoulk.Matcher
 
 
-internal class AllMatcher<T>(private val matcher: Matcher<T>) : Matcher<Iterable<T>> {
+internal class AllMatcher<in T>(private val matcher: Matcher<T>) : Matcher<Iterable<T>> {
     override val description = "contain only items matching ${matcher.description}"
 
     override fun match(actual: Iterable<T>) = actual.all { matcher.match(it) }

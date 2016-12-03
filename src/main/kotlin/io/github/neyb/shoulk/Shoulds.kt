@@ -7,15 +7,15 @@ import kotlin.test.assertFailsWith
 infix fun <T> T.shouldEqual(expected: T) = should(equal(expected))
 infix fun <T> T.shouldNotEqual(expected: T) = should(!equal(expected))
 
-infix fun <T> T.shouldBe(expected: T) = should(sameAs(expected))
-infix fun <T> T.shouldNotBe(expected: T) = should(!sameAs(expected))
+infix fun <T> T.shouldBe(expected: T) = should(be(expected))
+infix fun <T> T.shouldNotBe(expected: T) = should(!be(expected))
 
 infix fun <T> Iterable<T>.shouldContain(expected: T) = should(contain(expected))
 infix fun <T> Iterable<T>.shouldContain(matcher: Matcher<T>) = should(contain(matcher))
 
 infix fun <T> Iterable<T>.shouldNotContain(expected: T) = should(!contain(expected))
 
-//infix fun <T> Iterable<T>.matchMatchInOrder(matchers: List<Matcher<T>>) = should(matchInOrder(matchers))
+infix fun <T> Iterable<T>.shouldMatchInOrder(matchers: List<Matcher<T>>) = should(matchInOrder(matchers))
 
 
 //infix fun <T> Iterable<T>.anyShouldMatch(matcher: Matcher<T>) = should(anyMatch(matcher))

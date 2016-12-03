@@ -130,9 +130,37 @@ class ShouldsSpek : Spek({
                     }
                 }
                 group("match in order") {
-//                    list matchMatchInOrder listOf(
-//                            match("start with a c") { s: String -> s[0] == 'c' },
-//                            match("start with a d") { s: String -> s[0] == 'd' })
+                    test("matchInOrder passing test") {
+                        list shouldMatchInOrder listOf(
+                                match("start with a 'c'") { s: String -> s[0] == 'c' },
+                                match("start with a 'd'") { s: String -> s[0] == 'd' })
+                    }
+
+                    test("matchInOrder should check size first and fail with right message") {
+                        val failMessage = assertFails {
+                            list shouldMatchInOrder listOf(
+                                    match("start with a 'a'") { s: String -> s[0] == 'a' },
+                                    match("start with a 'c'") { s: String -> s[0] == 'c' },
+                                    match("start with a 'd'") { s: String -> s[0] == 'd' }
+                            )
+                        }.message
+                        assertEquals(
+                                """"[cat, dog]" should have 3 element(s) but has 2 element(s)""",
+                                failMessage
+                        )
+                    }
+
+                    test("matchInOrder fail with right message") {
+                        val failMessage = assertFails {
+                            list shouldMatchInOrder listOf(
+                                    match("start with a 'a'") { s: String -> s[0] == 'a' },
+                                    match("start with a 'd'") { s: String -> s[0] == 'd' })
+                        }.message
+                        assertEquals(
+                                """"[cat, dog]" should match matchers but it fails because "cat" should start with a 'a'""",
+                                failMessage
+                        )
+                    }
                 }
                 group("match in any order") { }
                 group("all match") { }
@@ -185,7 +213,7 @@ class ShouldsSpek : Spek({
 
                     it("should throw the right message") {
                         val failingMessage = assertFails { failingTest() }.message
-                        assertEquals(""""kitty" does not match a not described criteria""", failingMessage)
+                        assertEquals(""""kitty" should match an undescribed criteria""", failingMessage)
                     }
                 }
 
