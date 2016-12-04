@@ -20,7 +20,7 @@ class ShouldsSpek : Spek({
                     val failMessage = assertFailsWith<AssertionError> {
                         "dog" shouldEqual "cat"
                     }.message
-                    assertEquals(""""dog" should be equals to "cat"""", failMessage)
+                    assertEquals(""""dog" does not be equals to "cat"""", failMessage)
                 }
             }
 
@@ -33,7 +33,7 @@ class ShouldsSpek : Spek({
                     val failMessage = assertFailsWith<AssertionError> {
                         "dog" shouldNotEqual "dog"
                     }.message
-                    assertEquals(""""dog" should not be equals to "dog"""", failMessage)
+                    assertEquals(""""dog" does be equals to "dog"""", failMessage)
                 }
             }
         }
@@ -54,11 +54,8 @@ class ShouldsSpek : Spek({
                         o1 shouldBe o3
                     }.message
 
-                    failMessage should match { it?.matches(Regex(""""dog" should be the same object as "cat"@\d+ but its identity hashCode is @\d+""")) ?: false }
-
-                    assertTrue(failMessage
-                            ?.matches(Regex(""""dog" should be the same object as "cat"@\d+ but its identity hashCode is @\d+"""))
-                            ?: false)
+                    failMessage should match { it?.matches(Regex(
+                            """"dog" does not be the same object as "cat"@\d+: its identity hashCode is @\d+""")) ?: false }
                 }
             }
 
@@ -68,13 +65,9 @@ class ShouldsSpek : Spek({
                 }
 
                 it("fails with right message") {
-                    val failMessage = assertFails {
+                    assertFails {
                         o1 shouldNotBe o2
-                    }.message
-
-                    assertFalse(failMessage
-                            ?.matches(Regex(""""dog" should be the same object as "cat"@\d+ but its identity hashCode is @\d+"""))
-                            ?: true)
+                    }.message should match { it?.matches(Regex(""""dog" does be the same object as "dog"@\d+: its identity hashCode is @\d+"""))?:false }
                 }
             }
         }
@@ -88,10 +81,9 @@ class ShouldsSpek : Spek({
                 }
 
                 it("fails with right exception") {
-                    val failMessage = assertFails {
+                    assertFails {
                         list shouldContain "kitty"
-                    }.message
-                    assertEquals(""""[cat, dog]" should contain "kitty"""", failMessage)
+                    }.message shouldEqual """"[cat, dog]" does not contain "kitty""""
                 }
             }
             group("shouldNotContain") {
@@ -103,7 +95,7 @@ class ShouldsSpek : Spek({
                     val failMessage = assertFails {
                         list shouldNotContain "cat"
                     }.message
-                    assertEquals(""""[cat, dog]" should not contain "cat"""", failMessage)
+                    assertEquals(""""[cat, dog]" does contain "cat"""", failMessage)
                 }
             }
             group("shouldContainAny") { }
@@ -119,14 +111,14 @@ class ShouldsSpek : Spek({
                         val failMessage = assertFails {
                             list shouldContain match("start with a z") { it[0] == 'z' }
                         }.message
-                        assertEquals(""""[cat, dog]" should contain an element matching "start with a z"""", failMessage)
+                        assertEquals(""""[cat, dog]" does not contain an element matching "start with a z"""", failMessage)
                     }
 
                     it("fails with right exception") {
                         val failMessage = assertFails {
                             list shouldContain match("start with a z") { it[0] == 'z' }
                         }.message
-                        assertEquals(""""[cat, dog]" should contain an element matching "start with a z"""", failMessage)
+                        assertEquals(""""[cat, dog]" does not contain an element matching "start with a z"""", failMessage)
                     }
                 }
                 group("match in order") {
@@ -145,7 +137,7 @@ class ShouldsSpek : Spek({
                             )
                         }.message
                         assertEquals(
-                                """"[cat, dog]" should have 3 element(s) but has 2 element(s)""",
+                                """"[cat, dog]" does not have 3 element(s): has 2 element(s)""",
                                 failMessage
                         )
                     }
@@ -157,7 +149,7 @@ class ShouldsSpek : Spek({
                                     match("start with a 'd'") { s: String -> s[0] == 'd' })
                         }.message
                         assertEquals(
-                                """"[cat, dog]" should match matchers but it fails because "cat" should start with a 'a'""",
+                                """"[cat, dog]" does not match matchers: it fails because "cat" does not start with a 'a'""",
                                 failMessage
                         )
                     }
@@ -213,7 +205,7 @@ class ShouldsSpek : Spek({
 
                     it("should throw the right message") {
                         val failingMessage = assertFails { failingTest() }.message
-                        assertEquals(""""kitty" should match an undescribed criteria""", failingMessage)
+                        assertEquals(""""kitty" does not match an undescribed criteria""", failingMessage)
                     }
                 }
 
@@ -232,15 +224,15 @@ class ShouldsSpek : Spek({
                     val failMessage = assertFails {
                         "kitty" should match("have a size of 3") { it.length == 3 }
                     }.message
-                    assertEquals(""""kitty" should have a size of 3""", failMessage)
+                    assertEquals(""""kitty" does not have a size of 3""", failMessage)
                 }
 
                 test("you can specify the error cause with `but` function") {
                     val failMessage = assertFails {
                         "kitty" should (match<String>("have a size of 3") { it.length == 3 }
-                                but { "has a size of ${it.length}" })
+                                but { "it has a size of ${it.length}" })
                     }.message
-                    assertEquals(""""kitty" should have a size of 3 but has a size of 5""", failMessage)
+                    assertEquals(""""kitty" does not have a size of 3: it has a size of 5""", failMessage)
                 }
             }
 

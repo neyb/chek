@@ -7,7 +7,7 @@ class FluentMatcher<T> internal constructor(
         override val description: String,
         private val dismatchDescriptionBuilder: ((T) -> String)? = null,
         private val positive: Boolean = true,
-        private val butLabel: String = "but",
+        private val butLabel: String = ": ",
         private val matcher: (T) -> Boolean
 ) : Matcher<T> {
 
@@ -15,16 +15,16 @@ class FluentMatcher<T> internal constructor(
 
     override fun getDismatchDescriptionFor(actual: T) =
             if (dismatchDescriptionBuilder == null) expectedDescription(actual)
-            else "${expectedDescription(actual)} $butLabel ${dismatchDescription(actual, dismatchDescriptionBuilder)}"
+            else expectedDescription(actual) + butLabel + dismatchDescription(actual, dismatchDescriptionBuilder)
 
     infix fun but(dismatchDescriptionBuilder: ((T) -> String)) = copy(dismatchDescriptionBuilder = dismatchDescriptionBuilder)
 
     infix fun butFailBecause(dismatchDescriptionBuilder: ((T) -> String)) =
-            copy(butLabel = "but it fails because", dismatchDescriptionBuilder = dismatchDescriptionBuilder)
+            copy(butLabel = ": it fails because ", dismatchDescriptionBuilder = dismatchDescriptionBuilder)
 
     operator fun not() = copy(positive = !positive, matcher = { actual -> !matcher.invoke(actual) })
 
-    private fun expectedDescription(actual: T) = """"$actual" ${if (positive) "should" else "should not"} $description"""
+    private fun expectedDescription(actual: T) = """"$actual" ${if (positive) "does not" else "does"} $description"""
 
     private fun dismatchDescription(actual: T, dismatchDescriptionBuilder: (T) -> String) = dismatchDescriptionBuilder.invoke(actual)
 

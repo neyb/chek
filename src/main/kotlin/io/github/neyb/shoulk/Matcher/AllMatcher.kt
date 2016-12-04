@@ -6,8 +6,8 @@ internal class AllMatcher<in T>(private val matcher: Matcher<T>) : Matcher<Itera
 
     override fun match(actual: Iterable<T>) = actual.all { matcher.match(it) }
 
-    override fun getDismatchDescriptionFor(actual: Iterable<T>) = "$actual should $description" +
-            " but items at position ${positions(actual)} does not"
+    override fun getDismatchDescriptionFor(actual: Iterable<T>) = "$actual does not $description" +
+            ": items at position ${positions(actual)} does not"
 
     private fun positions(actual: Iterable<T>) = actual.withIndex().asSequence()
             .filter { !matcher.match(it.value) }
