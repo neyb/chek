@@ -20,7 +20,7 @@ class ShouldsSpek : Spek({
                     val failMessage = assertFailsWith<AssertionError> {
                         "dog" shouldEqual "cat"
                     }.message
-                    assertEquals(""""dog" does not be equals to "cat"""", failMessage)
+                    assertEquals(""""dog" is not equal to "cat"""", failMessage)
                 }
             }
 
@@ -33,7 +33,7 @@ class ShouldsSpek : Spek({
                     val failMessage = assertFailsWith<AssertionError> {
                         "dog" shouldNotEqual "dog"
                     }.message
-                    assertEquals(""""dog" does be equals to "dog"""", failMessage)
+                    assertEquals(""""dog" is equal to "dog"""", failMessage)
                 }
             }
         }
@@ -55,7 +55,7 @@ class ShouldsSpek : Spek({
                     }.message
 
                     failMessage should match { it?.matches(Regex(
-                            """"dog" does not be the same object as "cat"@\d+: its identity hashCode is @\d+""")) ?: false }
+                            """"dog" is not the same object as "cat"@\d+: its identity hashCode is @\d+""")) ?: false }
                 }
             }
 
@@ -67,7 +67,7 @@ class ShouldsSpek : Spek({
                 it("fails with right message") {
                     assertFails {
                         o1 shouldNotBe o2
-                    }.message should match { it?.matches(Regex(""""dog" does be the same object as "dog"@\d+: its identity hashCode is @\d+"""))?:false }
+                    }.message should match { it?.matches(Regex(""""dog" is the same object as "dog"@\d+: its identity hashCode is @\d+"""))?:false }
                 }
             }
         }
@@ -149,7 +149,7 @@ class ShouldsSpek : Spek({
                                     match("start with a 'd'") { s: String -> s[0] == 'd' })
                         }.message
                         assertEquals(
-                                """"[cat, dog]" does not match matchers: it fails because "cat" does not start with a 'a'""",
+                                """"[cat, dog]" does not match matchers: "cat" does not start with a 'a'""",
                                 failMessage
                         )
                     }

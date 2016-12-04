@@ -2,7 +2,7 @@ package io.github.neyb.shoulk
 
 import io.github.neyb.shoulk.Matcher.*
 
-fun <T> equal(expected: T) = match<T>("""be equals to "$expected"""") { it == expected }
+fun <T> equal(expected: T) = match<T>("""be equal to "$expected"""") { it == expected }
 
 fun <T> be(expected: T) = match<T>("""be the same object as "$expected"@${System.identityHashCode(expected)}""")
 { it === expected } but { "its identity hashCode is @${System.identityHashCode(it)}" }
@@ -14,7 +14,7 @@ fun <T> contain(matcher: Matcher<T>) = match<Iterable<T>>("""contain an element 
 
 fun <T> matchInOrder(matchers: List<Matcher<T>>) = haveSize(matchers.size) and (
         match<Iterable<T>>("match matchers") { it.getFirstMissMatchingIndex(matchers) == null }
-                butFailBecause {
+                but {
             val failIndex = it.getFirstMissMatchingIndex(matchers)
                     ?: throw IllegalStateException("no matcher fails !")
             matchers[failIndex].getDismatchDescriptionFor(it[failIndex])
