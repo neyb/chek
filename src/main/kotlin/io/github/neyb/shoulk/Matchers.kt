@@ -12,15 +12,9 @@ fun <T> contain(expected: T) = match<Iterable<T>>("""contain "$expected"""") { i
 fun <T> contain(matcher: Matcher<T>) = match<Iterable<T>>("""contain an element matching "${matcher.description}"""")
 { it.any { matcher.match(it).success } }
 
-fun <T> matchInOrder(matchers: List<Matcher<T>>) = haveSize(matchers.size) and (
-        match<Iterable<T>>("match matchers") { it.getFirstMissMatchingIndex(matchers) == null }
-                but {
-            val failIndex = it.getFirstMissMatchingIndex(matchers)
-                    ?: throw IllegalStateException("no matcher fails !")
-            matchers[failIndex].getDismatchDescriptionFor(it[failIndex])
-        })
+fun <T> matchInOrder(matchers: List<Matcher<T>>) = InOrderMatcher(matchers)
 
-private fun <T> Iterable<T>.getFirstMissMatchingIndex(matchers: List<Matcher<T>>): Int? {
+private fun <T> Iterable<T>.getFirstDismatchIndex(matchers: List<Matcher<T>>): Int? {
     this.forEachIndexed { index, curr ->
         if (!matchers[index].match(curr).success) return index
     }

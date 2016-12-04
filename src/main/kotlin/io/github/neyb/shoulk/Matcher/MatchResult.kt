@@ -9,5 +9,6 @@ sealed class MatchResult (val success:Boolean){
 
     class Fail(val errorMessage:String) :MatchResult(false) {
         override fun check() = throw AssertionError(errorMessage)
+        fun wrap(wrapErrorMessage:String) = Fail("$wrapErrorMessage: $errorMessage")
     }
 }

@@ -54,8 +54,10 @@ class ShouldsSpek : Spek({
                         o1 shouldBe o3
                     }.message
 
-                    failMessage should match { it?.matches(Regex(
-                            """"dog" is not the same object as "cat"@\d+: its identity hashCode is @\d+""")) ?: false }
+                    failMessage should match {
+                        it?.matches(Regex(
+                                """"dog" is not the same object as "cat"@\d+: its identity hashCode is @\d+""")) ?: false
+                    }
                 }
             }
 
@@ -67,7 +69,7 @@ class ShouldsSpek : Spek({
                 it("fails with right message") {
                     assertFails {
                         o1 shouldNotBe o2
-                    }.message should match { it?.matches(Regex(""""dog" is the same object as "dog"@\d+: its identity hashCode is @\d+"""))?:false }
+                    }.message should match { it?.matches(Regex(""""dog" is the same object as "dog"@\d+: its identity hashCode is @\d+""")) ?: false }
                 }
             }
         }
@@ -128,20 +130,6 @@ class ShouldsSpek : Spek({
                                 match("start with a 'd'") { s: String -> s[0] == 'd' })
                     }
 
-                    test("matchInOrder should check size first and fail with right message") {
-                        val failMessage = assertFails {
-                            list shouldMatchInOrder listOf(
-                                    match("start with a 'a'") { s: String -> s[0] == 'a' },
-                                    match("start with a 'c'") { s: String -> s[0] == 'c' },
-                                    match("start with a 'd'") { s: String -> s[0] == 'd' }
-                            )
-                        }.message
-                        assertEquals(
-                                """"[cat, dog]" does not have 3 element(s): has 2 element(s)""",
-                                failMessage
-                        )
-                    }
-
                     test("matchInOrder fail with right message") {
                         val failMessage = assertFails {
                             list shouldMatchInOrder listOf(
@@ -150,6 +138,32 @@ class ShouldsSpek : Spek({
                         }.message
                         assertEquals(
                                 """"[cat, dog]" does not match matchers: "cat" does not start with a 'a'""",
+                                failMessage
+                        )
+                    }
+
+                    test("matchInOrder check size and fail with right message (1)") {
+                        val failMessage = assertFails {
+                            list shouldMatchInOrder listOf(
+                                    match("start with a 'c'") { s: String -> s[0] == 'c' },
+                                    match("start with a 'd'") { s: String -> s[0] == 'd' },
+                                    match("start with a 'a'") { s: String -> s[0] == 'a' }
+                            )
+                        }.message
+                        assertEquals(
+                                """"[cat, dog]" has 2 elements while it should have 3 elements""",
+                                failMessage
+                        )
+                    }
+
+                    test("matchInOrder should check size and fail with right message (2)") {
+                        val failMessage = assertFails {
+                            list shouldMatchInOrder listOf(
+                                    match("start with a 'c'") { s: String -> s[0] == 'c' }
+                            )
+                        }.message
+                        assertEquals(
+                                """"[cat, dog]" has 2 elements while it should have 1 element""",
                                 failMessage
                         )
                     }
