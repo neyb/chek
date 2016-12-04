@@ -1,6 +1,6 @@
 package io.github.neyb.shoulk.Matcher
 
-fun <T> match(matcher: (T) -> Boolean): FluentMatcher<T> = FluentMatcher("match an undescribed criteria", matcher = matcher)
+fun <T> match(matcher: (T) -> Boolean) = FluentMatcher("match an undescribed criteria", matcher = matcher)
 fun <T> match(description: String, matcher: (T) -> Boolean) = FluentMatcher(description, matcher = matcher)
 
 private val firstWorldSplitter = Regex("""\w+(.*)""")
@@ -10,9 +10,9 @@ class FluentMatcher<T> internal constructor(
         private val dismatchDescriptionBuilder: ((T) -> String)? = null,
         private val positive: Boolean = true,
         private val matcher: (T) -> Boolean
-) : Matcher<T> {
+) : SimpleMatcher<T>(description) {
 
-    override fun match(actual: T) = matcher(actual)
+    override fun doesMatch(actual: T) = matcher(actual)
 
     override fun getDismatchDescriptionFor(actual: T) =
             if (dismatchDescriptionBuilder == null) expectedDescription(actual)

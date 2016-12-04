@@ -27,7 +27,5 @@ infix inline fun <reified E : Throwable> (() -> Any).shouldThrow(expectedType: K
         assertFailsWith<E> { this() }
 infix fun <E : Throwable> E.that(matcher: Matcher<E>) = should(matcher)
 
-infix fun <T> T.should(matcher: Matcher<T>) {
-    if (!matcher.match(this)) throw AssertionError(matcher.getDismatchDescriptionFor(this))
-}
+infix fun <T> T.should(matcher: Matcher<T>) = matcher.match(this).check()
 

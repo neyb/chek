@@ -10,7 +10,7 @@ fun <T> be(expected: T) = match<T>("""be the same object as "$expected"@${System
 fun <T> contain(expected: T) = match<Iterable<T>>("""contain "$expected"""") { it.contains(expected) }
 
 fun <T> contain(matcher: Matcher<T>) = match<Iterable<T>>("""contain an element matching "${matcher.description}"""")
-{ it.any { matcher.match(it) } }
+{ it.any { matcher.match(it).success } }
 
 fun <T> matchInOrder(matchers: List<Matcher<T>>) = haveSize(matchers.size) and (
         match<Iterable<T>>("match matchers") { it.getFirstMissMatchingIndex(matchers) == null }
@@ -22,7 +22,7 @@ fun <T> matchInOrder(matchers: List<Matcher<T>>) = haveSize(matchers.size) and (
 
 private fun <T> Iterable<T>.getFirstMissMatchingIndex(matchers: List<Matcher<T>>): Int? {
     this.forEachIndexed { index, curr ->
-        if (!matchers[index].match(curr)) return index
+        if (!matchers[index].match(curr).success) return index
     }
     return null
 }

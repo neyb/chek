@@ -237,9 +237,9 @@ class ShouldsSpek : Spek({
             }
 
             group("with your own matcher") {
-                class SizeOfMatcher(private val expectedSize: Int) : Matcher<String> {
-                    override val description = "has a size of $expectedSize"
-                    override fun match(actual: String) = actual.length == expectedSize
+                class SizeOfMatcher(private val expectedSize: Int)
+                    : SimpleMatcher<String>("has a size of $expectedSize") {
+                    override fun doesMatch(actual: String) = actual.length == expectedSize
                     override fun getDismatchDescriptionFor(actual: String) = "$actual has not a size of $expectedSize"
                 }
 
