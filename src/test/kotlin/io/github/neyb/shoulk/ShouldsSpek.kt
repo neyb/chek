@@ -169,7 +169,19 @@ class ShouldsSpek : Spek({
                     }
                 }
                 group("match in any order") { }
-                group("all match") { }
+                group("all match") {
+                    test("should all match") {
+                        list shouldAll match { it.length == 3 }
+                    }
+
+                    test("should all match fails with right message") {
+                        ({ list shouldAll match("have a size of 100") { it.length == 100 } } shouldThrow AssertionError::class)
+                                .message shouldEqual
+                                """"[cat, dog]" does not matcher all matcher:
+                                   |  @0: "cat" does not have a size of 100,
+                                   |  @1: "dog" does not have a size of 100""".trimMargin()
+                    }
+                }
                 group("none match") { }
             }
         }

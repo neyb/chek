@@ -20,7 +20,7 @@ infix fun <T> Iterable<T>.shouldMatchInOrder(matchers: List<Matcher<T>>) = shoul
 
 //infix fun <T> Iterable<T>.anyShouldMatch(matcher: Matcher<T>) = should(anyMatch(matcher))
 //infix fun <T> Iterable<T>.noneShouldMatch(matcher: Matcher<T>) = should(anyMatch(matcher))
-//infix fun <T> Iterable<T>.allShouldMatch(matcher: Matcher<T>) = should(!anyMatch(matcher))
+infix fun <T> Iterable<T>.shouldAll(matcher: Matcher<T>) = should(all(matcher))
 
 @Suppress("UNUSED_PARAMETER") // for infix code
 infix inline fun <reified E : Throwable> (() -> Any).shouldThrow(expectedType: KClass<E>) =

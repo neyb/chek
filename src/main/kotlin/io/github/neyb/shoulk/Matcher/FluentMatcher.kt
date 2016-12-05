@@ -10,7 +10,7 @@ class FluentMatcher<T> internal constructor(
         private val dismatchDescriptionBuilder: ((T) -> String)? = null,
         private val positive: Boolean = true,
         private val matcher: (T) -> Boolean
-) : SimpleMatcher<T>(description) {
+) : SimpleMatcher<T>(description), ReversibleMatcher<T, FluentMatcher<T>> {
 
     override fun doesMatch(actual: T) = matcher(actual)
 
@@ -20,7 +20,7 @@ class FluentMatcher<T> internal constructor(
 
     infix fun but(dismatchDescriptionBuilder: ((T) -> String)) = copy(dismatchDescriptionBuilder = dismatchDescriptionBuilder)
 
-    operator fun not() = copy(positive = !positive, matcher = { actual -> !matcher.invoke(actual) })
+    override operator fun not() = copy(positive = !positive, matcher = { actual -> !matcher.invoke(actual) })
 
     private fun expectedDescription(actual: T) = """"$actual" ${conjuguate(!positive, description)}"""
 

@@ -21,7 +21,7 @@ private fun <T> Iterable<T>.getFirstDismatchIndex(matchers: List<Matcher<T>>): I
     return null
 }
 
-fun <T> allMatch(matcher: Matcher<T>): Matcher<Iterable<T>> = AllMatcher(matcher)
+fun <T> all(matcher: Matcher<T>): Matcher<Iterable<T>> = AllMatcher(matcher)
 
 fun <T> noneMatch(matcher: Matcher<T>): Matcher<Iterable<T>> = NoneMatcher(matcher)
 
