@@ -8,3 +8,5 @@ before_install:
   - wget http://downloads.gradle.org/distributions/gradle-$gradleVersion-bin.zip
   - unzip -qq gradle-$gradleVersion-bin.zip
   - $PWD/gradle-$gradleVersion/bin/gradle wrapper
+
+install: ./gradlew check
