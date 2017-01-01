@@ -17,10 +17,8 @@ class ShouldsSpek : Spek({
                 }
 
                 it("fails with right exception") {
-                    val failMessage = assertFailsWith<AssertionError> {
-                        "dog" shouldEqual "cat"
-                    }.message
-                    assertEquals(""""dog" is not equal to "cat"""", failMessage)
+                    { "dog" shouldEqual "cat" } shouldThrow AssertionError::class that
+                            hasMessage(""""dog" is not equal to "cat"""")
                 }
             }
 
@@ -30,10 +28,7 @@ class ShouldsSpek : Spek({
                 }
 
                 it("fails with right exception") {
-                    val failMessage = assertFailsWith<AssertionError> {
-                        "dog" shouldNotEqual "dog"
-                    }.message
-                    assertEquals(""""dog" is equal to "dog"""", failMessage)
+                    { "dog" shouldNotEqual "dog" } shouldFailWithMessage """"dog" is equal to "dog""""
                 }
             }
         }
@@ -50,13 +45,8 @@ class ShouldsSpek : Spek({
                 }
 
                 it("fails with right message") {
-                    val failMessage = assertFails {
-                        o1 shouldBe o3
-                    }.message
-
-                    failMessage should match {
-                        it?.matches(Regex(
-                                """"dog" is not the same object as "cat"@\d+: its identity hashCode is @\d+""")) ?: false
+                    { o1 shouldBe o3 } shouldFailWithMessage match {
+                        it.matches(Regex(""""dog" is not the same object as "cat"@\d+: its identity hashCode is @\d+"""))
                     }
                 }
             }
@@ -67,15 +57,16 @@ class ShouldsSpek : Spek({
                 }
 
                 it("fails with right message") {
-                    assertFails {
-                        o1 shouldNotBe o2
-                    }.message should match { it?.matches(Regex(""""dog" is the same object as "dog"@\d+: its identity hashCode is @\d+""")) ?: false }
+                    { o1 shouldNotBe o2 } shouldFailWithMessage match {
+                        it.matches(Regex(""""dog" is the same object as "dog"@\d+: its identity hashCode is @\d+"""))
+                    }
                 }
             }
         }
 
         group("testing collection (actually its based on iterable)") {
             val list = listOf("cat", "dog")
+            fun startWith(letter:Char) = match<String>("start with a $letter") { it[0] == letter }
 
             group("shouldContain") {
                 test("list should contain cat") {
@@ -83,9 +74,7 @@ class ShouldsSpek : Spek({
                 }
 
                 it("fails with right exception") {
-                    assertFails {
-                        list shouldContain "kitty"
-                    }.message shouldEqual """"[cat, dog]" does not contain "kitty""""
+                    { list shouldContain "kitty" } shouldFailWithMessage """"[cat, dog]" does not contain "kitty""""
                 }
             }
             group("shouldNotContain") {
@@ -94,78 +83,54 @@ class ShouldsSpek : Spek({
                 }
 
                 it("fails with right exception") {
-                    val failMessage = assertFails {
-                        list shouldNotContain "cat"
-                    }.message
-                    assertEquals(""""[cat, dog]" does contain "cat"""", failMessage)
+                    { list shouldNotContain "cat" } shouldFailWithMessage """"[cat, dog]" does contain "cat""""
                 }
             }
             group("shouldContainAny") { }
             group("shouldContainAll") { }
 
             group("generic matching") {
-                group("any match") {
+                group("contain") {
                     test("list shouldContain beginning with c") {
-                        list shouldContain match { it[0] == 'c' }
+                        list shouldContain startWith('c')
                     }
 
                     it("fails with right exception") {
-                        val failMessage = assertFails {
-                            list shouldContain match("start with a z") { it[0] == 'z' }
-                        }.message
-                        assertEquals(""""[cat, dog]" does not contain an element matching "start with a z"""", failMessage)
-                    }
-
-                    it("fails with right exception") {
-                        val failMessage = assertFails {
-                            list shouldContain match("start with a z") { it[0] == 'z' }
-                        }.message
-                        assertEquals(""""[cat, dog]" does not contain an element matching "start with a z"""", failMessage)
+                        { list shouldContain startWith('z') } shouldFailWithMessage
+                                """"[cat, dog]" does not contain an element matching "start with a z""""
                     }
                 }
                 group("match in order") {
                     test("matchInOrder passing test") {
                         list shouldMatchInOrder listOf(
-                                match("start with a 'c'") { s: String -> s[0] == 'c' },
-                                match("start with a 'd'") { s: String -> s[0] == 'd' })
+                                startWith('c'),
+                                startWith('d'))
                     }
 
                     test("matchInOrder fail with right message") {
-                        val failMessage = assertFails {
+                        {
                             list shouldMatchInOrder listOf(
-                                    match("start with a 'a'") { s: String -> s[0] == 'a' },
-                                    match("start with a 'd'") { s: String -> s[0] == 'd' })
-                        }.message
-                        assertEquals(
-                                """"[cat, dog]" does not match matchers: "cat" does not start with a 'a'""",
-                                failMessage
-                        )
+                                    startWith('a'),
+                                    startWith('d'))
+                        } shouldFailWithMessage
+                                """"[cat, dog]" does not match matchers: "cat" does not start with a 'a'"""
                     }
 
                     test("matchInOrder check size and fail with right message (1)") {
-                        val failMessage = assertFails {
+                        {
                             list shouldMatchInOrder listOf(
-                                    match("start with a 'c'") { s: String -> s[0] == 'c' },
-                                    match("start with a 'd'") { s: String -> s[0] == 'd' },
-                                    match("start with a 'a'") { s: String -> s[0] == 'a' }
-                            )
-                        }.message
-                        assertEquals(
-                                """"[cat, dog]" has 2 elements while it should have 3 elements""",
-                                failMessage
-                        )
+                                    startWith('c'),
+                                    startWith('d'),
+                                    startWith('a'))
+                        } shouldFailWithMessage
+                                """"[cat, dog]" has 2 elements while it should have 3 elements"""
                     }
 
                     test("matchInOrder should check size and fail with right message (2)") {
-                        val failMessage = assertFails {
-                            list shouldMatchInOrder listOf(
-                                    match("start with a 'c'") { s: String -> s[0] == 'c' }
-                            )
-                        }.message
-                        assertEquals(
-                                """"[cat, dog]" has 2 elements while it should have 1 element""",
-                                failMessage
-                        )
+                        {
+                            list shouldMatchInOrder listOf(startWith('c'))
+                        } shouldFailWithMessage
+                                """"[cat, dog]" has 2 elements while it should have 1 element"""
                     }
                 }
                 group("match in any order") { }
@@ -175,8 +140,7 @@ class ShouldsSpek : Spek({
                     }
 
                     test("should all match fails with right message") {
-                        ({ list shouldAll match("have a size of 100") { it.length == 100 } } shouldThrow AssertionError::class)
-                                .message shouldEqual
+                        { list shouldAll match("have a size of 100") { it.length == 100 } } shouldFailWithMessage
                                 """"[cat, dog]" does not matcher all matcher:
                                    |  @0: "cat" does not have a size of 100,
                                    |  @1: "dog" does not have a size of 100""".trimMargin()
@@ -203,8 +167,7 @@ class ShouldsSpek : Spek({
 
                 group("with matcher") {
                     it("should pass `.shouldThrow<IndexOutOfBoundsException>{it.message != null}`") {
-                        failing shouldThrow IndexOutOfBoundsException::class that
-                                match("have no message") { it.message != null }
+                        failing shouldThrow IndexOutOfBoundsException::class that hasMessage()
                     }
                 }
             }
@@ -226,12 +189,11 @@ class ShouldsSpek : Spek({
                     val failingTest = { "kitty" should match { it.length == 3 } }
 
                     it("should throw assertionError") {
-                        assertFailsWith<AssertionError> { failingTest() }
+                        failingTest shouldThrow AssertionError::class
                     }
 
                     it("should throw the right message") {
-                        val failingMessage = assertFails { failingTest() }.message
-                        assertEquals(""""kitty" does not match an undescribed criteria""", failingMessage)
+                        failingTest shouldFailWithMessage """"kitty" does not match an undescribed criteria"""
                     }
                 }
 
@@ -254,19 +216,21 @@ class ShouldsSpek : Spek({
                 }
 
                 test("you can specify the error cause with `but` function") {
-                    val failMessage = assertFails {
+                    {
                         "kitty" should (match<String>("have a size of 3") { it.length == 3 }
                                 but { "it has a size of ${it.length}" })
-                    }.message
-                    assertEquals(""""kitty" does not have a size of 3: it has a size of 5""", failMessage)
+                    } shouldFailWithMessage
+                            """"kitty" does not have a size of 3: it has a size of 5"""
                 }
             }
 
             group("with your own matcher") {
                 class SizeOfMatcher(private val expectedSize: Int)
-                    : SimpleMatcher<String>("has a size of $expectedSize") {
-                    override fun doesMatch(actual: String) = actual.length == expectedSize
-                    override fun getDismatchDescriptionFor(actual: String) = "$actual has not a size of $expectedSize"
+                    : Matcher<String> {
+                    override val description = "has a size of $expectedSize"
+                    override fun match(actual: String) =
+                            if (actual.length == expectedSize) MatchResult.ok
+                            else fail("$actual has not a size of $expectedSize")
                 }
 
                 it("it can pass") {
@@ -274,8 +238,7 @@ class ShouldsSpek : Spek({
                 }
 
                 it("it can fail with your message") {
-                    val failMessage = assertFails { "dog" should SizeOfMatcher(2) }.message
-                    assertEquals("dog has not a size of 2", failMessage)
+                    { "dog" should SizeOfMatcher(2) } shouldFailWithMessage "dog has not a size of 2"
                 }
 
             }
