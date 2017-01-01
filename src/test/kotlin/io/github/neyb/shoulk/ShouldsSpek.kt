@@ -144,8 +144,8 @@ class ShouldsSpek : Spek({
                     test("should all match fails with right message") {
                         { list shouldAll match("have a size of 100") { it.length == 100 } } shouldFailWithMessage
                                 """"[cat, dog]" does not matcher all matcher:
-                                   |  @0: "cat" does not have a size of 100,
-                                   |  @1: "dog" does not have a size of 100""".trimMargin()
+                                   | * @0: "cat" does not have a size of 100
+                                   | * @1: "dog" does not have a size of 100""".trimMargin()
                     }
                 }
                 group("none match") { }

@@ -16,9 +16,9 @@ internal class AllMatcher<in T>(private val matcher: Matcher<T>)
 
     private fun buildFailMessage(actual: Iterable<T>, indexedFailResult: List<IndexedValue<MatchResult.Fail>>) = MatchResult.Fail(
             indexedFailResult.joinToString(
-                    prefix = "\"$actual\" does not matcher all matcher:",
-                    separator = ","
-            ) { "\n  @${it.index}: ${it.value.errorMessage}" })
+                    prefix = "\"$actual\" does not matcher all matcher:\n",
+                    separator = "\n"
+            ) { " * @${it.index}: ${it.value.errorMessage}" })
 
     private fun <T, Y> IndexedValue<T>.map(transform: (T) -> Y) =
             IndexedValue(this.index, transform(this.value))
