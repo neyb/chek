@@ -107,28 +107,30 @@ class ShouldsSpek : Spek({
                                 startWith('d'))
                     }
 
-                    test("matchInOrder fail with right message") {
+                    test("matchInOrder fails with right message") {
                         {
                             list shouldMatchInOrder listOf(
                                     startWith('a'),
-                                    startWith('d'))
+                                    startWith('q'))
                         } shouldFailWithMessage
-                                """"[cat, dog]" does not match matchers: "cat" does not start with a 'a'"""
+                                """"[cat, dog]" does not match matchers:
+                                   | * @0: "cat" does not start with a 'a'
+                                   | * @1: "dog" does not start with a 'q'""".trimMargin()
                     }
 
-                    test("matchInOrder check size and fail with right message (1)") {
+                    test("matchInOrder checks size first and fail with right message (1)") {
                         {
                             list shouldMatchInOrder listOf(
-                                    startWith('c'),
-                                    startWith('d'),
+                                    startWith('A'),
+                                    startWith('a'),
                                     startWith('a'))
                         } shouldFailWithMessage
                                 """"[cat, dog]" has 2 elements while it should have 3 elements"""
                     }
 
-                    test("matchInOrder should check size and fail with right message (2)") {
+                    test("matchInOrder checks size first and fail with right message (2)") {
                         {
-                            list shouldMatchInOrder listOf(startWith('c'))
+                            list shouldMatchInOrder listOf(startWith('w'))
                         } shouldFailWithMessage
                                 """"[cat, dog]" has 2 elements while it should have 1 element"""
                     }
