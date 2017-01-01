@@ -7,5 +7,4 @@ before_install:
   - gradleVersion=3.2
   - wget http://downloads.gradle.org/distributions/gradle-$gradleVersion-bin.zip
   - unzip -qq gradle-$gradleVersion-bin.zip
-  - export GRADLE_HOME=$PWD/gradle-$gradleVersion
-  - export PATH=$GRADLE_HOME/bin:$PATH
+  - $PWD/gradle-$gradleVersion/bin/gradle wrapper
