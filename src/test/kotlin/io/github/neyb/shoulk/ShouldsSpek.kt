@@ -66,7 +66,7 @@ class ShouldsSpek : Spek({
 
         group("testing collection (actually its based on iterable)") {
             val list = listOf("cat", "dog")
-            fun startWith(letter:Char) = match<String>("start with a $letter") { it[0] == letter }
+            fun startWith(letter:Char) = match<String>("start with a '$letter'") { it[0] == letter }
 
             group("shouldContain") {
                 test("list should contain cat") {
@@ -97,7 +97,7 @@ class ShouldsSpek : Spek({
 
                     it("fails with right exception") {
                         { list shouldContain startWith('z') } shouldFailWithMessage
-                                """"[cat, dog]" does not contain an element matching "start with a z""""
+                                """"[cat, dog]" does not contain an element matching "start with a 'z'""""
                     }
                 }
                 group("match in order") {
