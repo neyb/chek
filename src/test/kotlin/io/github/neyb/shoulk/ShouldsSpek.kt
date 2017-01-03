@@ -45,7 +45,7 @@ class ShouldsSpek : Spek({
                 }
 
                 it("fails with right message") {
-                    { o1 shouldBe o3 } shouldFailWithMessage match {
+                    { o1 shouldBe o3 } shouldFailWithAMessageThat match {
                         it.matches(Regex(""""dog" is not the same object as "cat"@\d+: its identity hashCode is @\d+"""))
                     }
                 }
@@ -57,7 +57,7 @@ class ShouldsSpek : Spek({
                 }
 
                 it("fails with right message") {
-                    { o1 shouldNotBe o2 } shouldFailWithMessage match {
+                    { o1 shouldNotBe o2 } shouldFailWithAMessageThat match {
                         it.matches(Regex(""""dog" is the same object as "dog"@\d+: its identity hashCode is @\d+"""))
                     }
                 }
@@ -118,7 +118,7 @@ class ShouldsSpek : Spek({
                                    | * @1: "dog" does not start with a 'q'""".trimMargin()
                     }
 
-                    test("matchInOrder checks size first and fail with right message (1)") {
+                    test("matchInOrder checks size first and fails with right message (1)") {
                         {
                             list shouldMatchInOrder listOf(
                                     startWith('A'),
@@ -128,7 +128,7 @@ class ShouldsSpek : Spek({
                                 """"[cat, dog]" has 2 elements while it should have 3 elements"""
                     }
 
-                    test("matchInOrder checks size first and fail with right message (2)") {
+                    test("matchInOrder checks size first and fails with right message (2)") {
                         {
                             list shouldMatchInOrder listOf(startWith('w'))
                         } shouldFailWithMessage
@@ -165,11 +165,30 @@ class ShouldsSpek : Spek({
 
                     test("failing test got right message") { }
                 }
-                group("with message") { }
+
+                group("check message") {
+                    it("can check an exception message") {
+                        failing shouldFailWithMessage "Index: 0, Size: 0"
+                    }
+
+                    it("checking an exception message fails with right message") {
+                        {failing shouldFailWithMessage "that's not the right message"} shouldFailWithMessage
+                                """ """
+                    }
+
+                    it("can check an exception message with a custom matcher") {
+                        failing shouldFailWithAMessageThat equal("Index: 0, Size: 0")
+                    }
+
+                    it("checking an exception message with a custom matcher should fail with right message") {
+                        { failing shouldFailWithAMessageThat match("have a size of 1 char") { it.length == 1 } } shouldFailWithMessage
+                                """ """
+                    }
+                }
 
                 group("with matcher") {
-                    it("should pass `.shouldThrow<IndexOutOfBoundsException>{it.message != null}`") {
-                        failing shouldThrow IndexOutOfBoundsException::class that hasMessage()
+                    it("should pass `failing shouldThrow IndexOutOfBoundsException::class that match { it.message != null }`") {
+                        failing shouldThrow IndexOutOfBoundsException::class that match { it.message != null }
                     }
                 }
             }

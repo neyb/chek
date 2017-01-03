@@ -30,9 +30,9 @@ infix inline fun <reified E : Throwable> (() -> Any).shouldThrow(expectedType: K
         assertFailsWith<E> { this() }
 infix fun <E : Throwable> E.that(matcher: Matcher<E>) = should(matcher)
 
-infix fun (()->Any).shouldFailWithMessage(messageMatcher: Matcher<String>) =
+infix fun (()->Any).shouldFailWithAMessageThat(messageMatcher: Matcher<String>) =
         this.shouldThrow(Throwable::class).message.should(haveValueThat(messageMatcher))
-infix fun (()->Any).shouldFailWithMessage(expectedMessage:String) = this.shouldFailWithMessage(equal(expectedMessage))
+infix fun (()->Any).shouldFailWithMessage(expectedMessage:String) = this.shouldFailWithAMessageThat(equal(expectedMessage))
 
 infix fun <T> T.should(matcher: Matcher<T>) = matcher.match(this).check()
 
