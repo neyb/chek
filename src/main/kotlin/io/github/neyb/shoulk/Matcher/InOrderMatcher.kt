@@ -6,36 +6,27 @@ class InOrderMatcher<in T>(val matchers: List<Matcher<T>>) : Matcher<Iterable<T>
     override val description = "match matchers"
 
     override fun match(actual: Iterable<T>): MatchResult {
-        try {
-            val matchErrors = ArrayList<IndexedValue<MatchResult.Fail>>()
-            for ((index, pair) in zipMatchersTo(actual).withIndex()) {
-                val (matcher, value) = pair
-                val matchResult = matcher.match(value)
-                if (!matchResult.success)
-                    matchErrors.add(IndexedValue(index, (matchResult as MatchResult.Fail)))
-            }
+        val actualElements = ArrayList<T>()
+        actualElements.addAll(actual)
 
-            return if (matchErrors.isEmpty()) MatchResult.ok
-            else MatchResult.Fail(buildMatchingFailMessage(actual, matchErrors))
+        if(actualElements.size != matchers.size)
+            return MatchResult.Fail("\"$actual\" has ${getNElementsLabel(actualElements.size)} while it should have ${getNElementsLabel(matchers.size)}")
 
-        } catch (differentSize: DifferentSize) {
-            return MatchResult.Fail("\"$actual\" has ${getNElementsLabel(differentSize.actualSize)} while it should have ${getNElementsLabel(matchers.size)}")
-        }
+        val matchErrors = getMatchingErrors(actualElements)
+
+        return if (matchErrors.isEmpty()) MatchResult.ok
+        else MatchResult.Fail(buildMatchingFailMessage(actual, matchErrors))
+    }
+
+    private fun getMatchingErrors(actualElements: Collection<T>): List<IndexedValue<MatchResult.Fail>> {
+        return matchers.zip(actualElements).withIndex().asSequence()
+                .map { IndexedValue( it.index, it.value.first.match(it.value.second)) }
+                .filter { indexedMatcherToElement -> !indexedMatcherToElement.value.success }
+                .map { IndexedValue(it.index, it.value as MatchResult.Fail) }
+                .toList()
     }
 
     private fun getNElementsLabel(n: Int) = "$n ${if (n > 1) "elements" else "element"}"
-
-    private fun zipMatchersTo(values: Iterable<T>): List<Pair<Matcher<T>, T>> {
-        val first = matchers.iterator()
-        val second = values.iterator()
-        val list = ArrayList<Pair<Matcher<T>, T>>(Math.min(matchers.size, values.collectionSizeOrDefault(10)))
-        while (first.hasNext() && second.hasNext())
-            list.add(first.next() to second.next())
-        val firstSize = list.size + first.countRemaining()
-        val secondSize = list.size + second.countRemaining()
-        if (firstSize != secondSize) throw DifferentSize(secondSize)
-        return list
-    }
 
     private class DifferentSize(val actualSize: Int) : Exception()
 
