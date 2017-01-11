@@ -1,4 +1,4 @@
-package io.github.neyb.shoulk.Matcher
+package io.github.neyb.shoulk.matcher
 
 sealed class MatchResult (val success:Boolean){
     abstract fun check()

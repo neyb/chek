@@ -1,4 +1,4 @@
-package io.github.neyb.shoulk.Matcher
+package io.github.neyb.shoulk.matcher
 
 interface Matcher<in T> {
     val description:String

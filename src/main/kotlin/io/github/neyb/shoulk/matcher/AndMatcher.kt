@@ -1,4 +1,4 @@
-package io.github.neyb.shoulk.Matcher
+package io.github.neyb.shoulk.matcher
 
 infix fun <T> Matcher<T>.and(matcher: Matcher<T>): Matcher<T> = AndMatcher(this, matcher)
 

@@ -1,6 +1,6 @@
 package io.github.neyb.shoulk
 
-import io.github.neyb.shoulk.Matcher.*
+import io.github.neyb.shoulk.matcher.*
 import org.jetbrains.spek.api.Spek
 import org.jetbrains.spek.api.dsl.given
 import org.jetbrains.spek.api.dsl.it
@@ -135,7 +135,11 @@ class ShouldsSpek : Spek({
                                 """"[cat, dog]" has 2 elements while it should have 1 element"""
                     }
                 }
-                group("match in any order") { }
+                group("match in any order") {
+                    list shouldMatchInAnyOrder listOf(
+
+                    )
+                }
                 group("all match") {
                     test("should all match") {
                         list shouldAll match { it.length == 3 }

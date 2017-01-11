@@ -1,4 +1,4 @@
-package io.github.neyb.shoulk.Matcher
+package io.github.neyb.shoulk.matcher
 
 abstract class SimpleMatcher<in T>(override val description: String) : Matcher<T> {
     override fun match(actual: T) =

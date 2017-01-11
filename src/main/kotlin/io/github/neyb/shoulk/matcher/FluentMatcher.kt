@@ -1,4 +1,4 @@
-package io.github.neyb.shoulk.Matcher
+package io.github.neyb.shoulk.matcher
 
 fun <T> match(matcher: (T) -> Boolean) = FluentMatcher("match an undescribed criteria", matcher = matcher)
 fun <T> match(description: String, matcher: (T) -> Boolean) = FluentMatcher(description, matcher = matcher)

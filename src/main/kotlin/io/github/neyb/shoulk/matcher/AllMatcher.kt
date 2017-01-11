@@ -1,4 +1,4 @@
-package io.github.neyb.shoulk.Matcher
+package io.github.neyb.shoulk.matcher
 
 internal class AllMatcher<in T>(private val matcher: Matcher<T>)
     : Matcher<Iterable<T>> {

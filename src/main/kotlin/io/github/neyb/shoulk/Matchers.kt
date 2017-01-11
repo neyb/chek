@@ -1,6 +1,6 @@
 package io.github.neyb.shoulk
 
-import io.github.neyb.shoulk.Matcher.*
+import io.github.neyb.shoulk.matcher.*
 import kotlin.test.fail
 
 fun <T> equal(expected: T) = match<T>("""be equal to "$expected"""") { it == expected }
@@ -29,6 +29,7 @@ fun <T : Throwable> hasMessage(matcher: Matcher<String>? = null): Matcher<T> = B
 }
 
 fun <T> matchInOrder(matchers: List<Matcher<T>>) = InOrderMatcher(matchers)
+fun <T> matchInAnyOrder(matchers: List<Matcher<T>>) = InAnyOrderMatcher(matchers)
 
 private fun <T> Iterable<T>.getFirstDismatchIndex(matchers: List<Matcher<T>>): Int? {
     this.forEachIndexed { index, curr ->

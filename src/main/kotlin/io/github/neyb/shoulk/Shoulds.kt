@@ -1,6 +1,6 @@
 package io.github.neyb.shoulk
 
-import io.github.neyb.shoulk.Matcher.Matcher
+import io.github.neyb.shoulk.matcher.Matcher
 import kotlin.reflect.KClass
 import kotlin.test.assertFails
 import kotlin.test.assertFailsWith
@@ -20,9 +20,12 @@ infix fun <T> Iterable<T>.shouldNotContain(expected: T) = should(!contain(expect
 
 infix fun <T> Iterable<T>.shouldMatchInOrder(matchers: List<Matcher<T>>) = should(matchInOrder(matchers))
 
+infix fun <T> Iterable<T>.shouldMatchInAnyOrder(matchers: List<Matcher<T>>) = should(matchInAnyOrder(matchers))
 
-//infix fun <T> Iterable<T>.anyShouldMatch(matcher: Matcher<T>) = should(anyMatch(matcher))
-//infix fun <T> Iterable<T>.noneShouldMatch(matcher: Matcher<T>) = should(anyMatch(matcher))
+
+
+//infix fun <T> Iterable<T>.anyShouldMatch(matcher: matcher<T>) = should(anyMatch(matcher))
+//infix fun <T> Iterable<T>.noneShouldMatch(matcher: matcher<T>) = should(anyMatch(matcher))
 infix fun <T> Iterable<T>.shouldAll(matcher: Matcher<T>) = should(all(matcher))
 
 @Suppress("UNUSED_PARAMETER") // for infix code
