@@ -2,7 +2,6 @@ package io.github.neyb.shoulk
 
 import io.github.neyb.shoulk.matcher.Matcher
 import kotlin.reflect.KClass
-import kotlin.test.assertFails
 import kotlin.test.assertFailsWith
 
 infix fun <T> T.shouldEqual(expected: T) = should(equal(expected))
@@ -21,8 +20,6 @@ infix fun <T> Iterable<T>.shouldNotContain(expected: T) = should(!contain(expect
 infix fun <T> Iterable<T>.shouldMatchInOrder(matchers: List<Matcher<T>>) = should(matchInOrder(matchers))
 
 infix fun <T> Iterable<T>.shouldMatchInAnyOrder(matchers: List<Matcher<T>>) = should(matchInAnyOrder(matchers))
-
-
 
 //infix fun <T> Iterable<T>.anyShouldMatch(matcher: matcher<T>) = should(anyMatch(matcher))
 //infix fun <T> Iterable<T>.noneShouldMatch(matcher: matcher<T>) = should(anyMatch(matcher))

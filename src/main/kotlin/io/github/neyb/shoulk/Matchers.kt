@@ -31,24 +31,7 @@ fun <T : Throwable> hasMessage(matcher: Matcher<String>? = null): Matcher<T> = B
 fun <T> matchInOrder(matchers: List<Matcher<T>>) = InOrderMatcher(matchers)
 fun <T> matchInAnyOrder(matchers: List<Matcher<T>>) = InAnyOrderMatcher(matchers)
 
-private fun <T> Iterable<T>.getFirstDismatchIndex(matchers: List<Matcher<T>>): Int? {
-    this.forEachIndexed { index, curr ->
-        if (!matchers[index].match(curr).success) return index
-    }
-    return null
-}
-
 fun <T> all(matcher: Matcher<T>): Matcher<Iterable<T>> = AllMatcher(matcher)
-
-fun <T> noneMatch(matcher: Matcher<T>): Matcher<Iterable<T>> = NoneMatcher(matcher)
-
-private fun haveSize(size: Int) = match<Iterable<*>>("have $size element(s)") { it.size() == size } but { "has ${it.size()} element(s)" }
-
-private fun Iterable<*>.size(): Int {
-    var size = 0
-    this.forEach { ++size }
-    return size
-}
 
 private operator fun <T> Iterable<T>.get(index: Int): T {
     if (index >= 0) this.forEachIndexed { currIndex, curr -> if (currIndex == index) return curr }

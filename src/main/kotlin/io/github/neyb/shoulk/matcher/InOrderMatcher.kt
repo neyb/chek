@@ -3,7 +3,7 @@ package io.github.neyb.shoulk.matcher
 import java.util.*
 
 class InOrderMatcher<in T>(val matchers: List<Matcher<T>>) : Matcher<Iterable<T>> {
-    override val description = "match matchers"
+    override val description = "match matchers in order"
 
     override fun match(actual: Iterable<T>): MatchResult {
         val actualElements = ArrayList<T>()
@@ -27,16 +27,6 @@ class InOrderMatcher<in T>(val matchers: List<Matcher<T>>) : Matcher<Iterable<T>
     }
 
     private fun getNElementsLabel(n: Int) = "$n ${if (n > 1) "elements" else "element"}"
-
-    private class DifferentSize(val actualSize: Int) : Exception()
-
-    private fun <T> Iterable<T>.collectionSizeOrDefault(default: Int): Int = if (this is Collection<*>) this.size else default
-
-    private fun Iterator<*>.countRemaining(): Int {
-        var index = 0
-        this.forEach { ++index }
-        return index
-    }
 
     private fun buildMatchingFailMessage(actual: Iterable<T>, matchErrors: List<IndexedValue<MatchResult.Fail>>) =
             matchErrors.joinToString(

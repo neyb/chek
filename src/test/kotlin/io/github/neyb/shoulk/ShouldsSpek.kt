@@ -183,7 +183,7 @@ class ShouldsSpek : Spek({
                                     equal("dog")
                             )} shouldFailWithMessage
                                     """"[cat, dog]" contains not matched lines:
-                                      | * @0: no matching matchers found for cat""".trimMargin()
+                                      | * @0: no matching matchers found for "cat"""".trimMargin()
                         }
                     }
                 }

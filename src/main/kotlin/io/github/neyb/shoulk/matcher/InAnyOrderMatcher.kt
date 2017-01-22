@@ -5,7 +5,7 @@ import io.github.neyb.shoulk.util.reverse
 import java.util.*
 
 class InAnyOrderMatcher<in T>(val matchers: List<Matcher<T>>) : Matcher<Iterable<T>> {
-    override val description = "match matchers"
+    override val description = "match matchers in any order"
 
     override fun match(actual: Iterable<T>): MatchResult {
         val actualElements = ArrayList<T>()
@@ -27,7 +27,7 @@ class InAnyOrderMatcher<in T>(val matchers: List<Matcher<T>>) : Matcher<Iterable
                 .withIndex()
                 .filter { it.value == null }
                 .map { it.index }
-                .map { IndexedValue(it, MatchResult.Fail("no matching matchers found for ${actualElements[it]}")) }
+                .map { IndexedValue(it, MatchResult.Fail("no matching matchers found for \"${actualElements[it]}\"")) }
                 .toList()
         return if (indexWithoutMatchers.isEmpty()) MatchResult.ok
         else MatchResult.Fail(buildFailMessage(actualElements, indexWithoutMatchers))
