@@ -1,8 +1,10 @@
 package io.github.neyb.shoulk.matcher
 
+import io.github.neyb.shoulk.util.removeDuplicateIndexes
+import io.github.neyb.shoulk.util.reverse
 import java.util.*
 
-class InAnyOrderMatcher<T>(val matchers: List<Matcher<T>>) : Matcher<Iterable<T>> {
+class InAnyOrderMatcher<in T>(val matchers: List<Matcher<T>>) : Matcher<Iterable<T>> {
     override val description = "match matchers"
 
     override fun match(actual: Iterable<T>): MatchResult {
@@ -12,27 +14,23 @@ class InAnyOrderMatcher<T>(val matchers: List<Matcher<T>>) : Matcher<Iterable<T>
         if (actualElements.size != matchers.size)
             return MatchResult.Fail("\"$actual\" has ${getNElementsLabel(actualElements.size)} while it should have ${getNElementsLabel(matchers.size)}")
 
-//        val indexedError = recMatch(matchers, actualElements)
-        return MatchResult.ok
-    }
+        val matchingMatcherIndexes = actualElements.map { actualElement ->
+            matchers.asSequence()
+                    .withIndex()
+                    .filter { it.value.match(actualElement).success }
+                    .map { it.index }
+                    .toSet()
+        }
 
-//    private fun recMatch(matchers: List<Matcher<T>>, actualElements: List<T>): IndexedValue<MatchResult.Fail<T>>? {
-//        if (actualElements.isEmpty()) return null
-//
-//        val actualElement = actualElements[0]
-//        val matchingMatchers = matchers.withIndex()
-//                .filter { it.value.match(actualElement).success }
-//        if (matchingMatchers.isEmpty()) return IndexedValue(1, )
-//        var maxDepthMatchingMatcher: IndexedValue<Matcher<T>>? = null
-//        for ((index, matchingMatcher) in matchingMatchers) {
-//            val recMatch = recMatch(matchers.drop(index), actualElements.drop(0)) ?: return null
-//            if (maxDepthMatchingMatcher == null || maxDepthMatchingMatcher.index < recMatch.index)
-//                maxDepthMatchingMatcher = recMatch
-//        }
-//        listOf<>()
-//        return IndexedValue(maxDepthMatchingMatcher.index + 1, )
-//
-//    }
+        val solutionMatchingMatcherIndexes = matchingMatcherIndexes.solve()
+        val indexWithoutMatchers = solutionMatchingMatcherIndexes.asSequence()
+                .withIndex()
+                .filter { it.value == null }
+                .map { it.index }
+                .toSet()
+        return if (indexWithoutMatchers.isEmpty()) MatchResult.ok
+        else MatchResult.Fail("???")
+    }
 
     private fun getNElementsLabel(n: Int) = "$n ${if (n > 1) "elements" else "element"}"
 
@@ -51,5 +49,33 @@ class InAnyOrderMatcher<T>(val matchers: List<Matcher<T>>) : Matcher<Iterable<T>
                     prefix = "\"$actual\" does not match matchers:\n",
                     separator = "\n",
                     transform = { pair -> " * @${pair.index}: ${pair.value.errorMessage}" })
+
+    private fun List<Set<Int>>.solve(): List<Int?> {
+        var currentIndexes: List<MutableSet<Int>> = this.map { HashSet(it) }
+        do {
+            currentIndexes = currentIndexes.safeSolve()
+        } while (currentIndexes.removeFirstDuplicateValue())
+        return currentIndexes.map { it.firstOrNull() }
+    }
+
+    private fun List<MutableSet<Int>>.safeSolve(): List<MutableSet<Int>> {
+        return this.removeDuplicateIndexes()
+                .reverse()
+                .removeDuplicateIndexes()
+                .reverse()
+                .map { it.toMutableSet() }
+    }
+
+    private fun List<MutableSet<Int>>.removeFirstDuplicateValue(): Boolean {
+        for (current in this)
+            if (current.size > 1) {
+                with(current.iterator()) {
+                    next()
+                    remove()
+                }
+                return true
+            }
+        return false
+    }
 
 }

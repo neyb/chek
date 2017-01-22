@@ -136,9 +136,48 @@ class ShouldsSpek : Spek({
                     }
                 }
                 group("match in any order") {
-                    list shouldMatchInAnyOrder listOf(
-
-                    )
+                    group("success tests") {
+                        test("matchinanyorder can match in right order") {
+                            list shouldMatchInAnyOrder listOf(
+                                    equal("dog"),
+                                    equal("cat")
+                            )
+                        }
+                        test("shouldMatchInAnyOrder can match in wrong order") {
+                            list shouldMatchInAnyOrder listOf(
+                                    equal("cat"),
+                                    equal("dog")
+                            )
+                        }
+                        test("shouldMatchInAnyOrder can match even if first matching is not leading to a success") {
+                            list shouldMatchInAnyOrder listOf(
+                                    match { it.length == 3 },
+                                    equal("cat")
+                            )
+                        }
+                        test("shouldMatchInAnyOrder can match even if there is several way to solve the problem") {
+                            list shouldMatchInAnyOrder listOf(
+                                    match { it.length == 3 },
+                                    match { it.length == 3 }
+                            )
+                        }
+                    }
+                    group("failing test") {
+                        test("shouldMatchInAnyOrder should fail with right exception when there is not enough matchers") {
+                            {list shouldMatchInAnyOrder listOf(
+                                    match { it.length == 3 }
+                            )} shouldFailWithMessage
+                                    """"[cat, dog]" has 2 elements while it should have 1 element"""
+                        }
+                        test("shouldMatchInAnyOrder should fail with right exception when there is too many matchers") {
+                            {list shouldMatchInAnyOrder listOf(
+                                    match { it.length == 3 },
+                                    match { it.length == 3 },
+                                    match { it.length == 3 }
+                            )} shouldFailWithMessage
+                                    """"[cat, dog]" has 2 elements while it should have 3 elements"""
+                        }
+                    }
                 }
                 group("all match") {
                     test("should all match") {
