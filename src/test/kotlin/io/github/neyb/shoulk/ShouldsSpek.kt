@@ -177,6 +177,14 @@ class ShouldsSpek : Spek({
                             )} shouldFailWithMessage
                                     """"[cat, dog]" has 2 elements while it should have 3 elements"""
                         }
+                        test("shouldMatchInAnyOrder should fail with right exception when one element cannot is not matched by any") {
+                            {list shouldMatchInAnyOrder listOf(
+                                    equal("dog"),
+                                    equal("dog")
+                            )} shouldFailWithMessage
+                                    """"[cat, dog]" contains not matched lines:
+                                      | * @0: no matching matchers found for cat""".trimMargin()
+                        }
                     }
                 }
                 group("all match") {

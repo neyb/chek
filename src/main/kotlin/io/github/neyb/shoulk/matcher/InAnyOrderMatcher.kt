@@ -27,26 +27,17 @@ class InAnyOrderMatcher<in T>(val matchers: List<Matcher<T>>) : Matcher<Iterable
                 .withIndex()
                 .filter { it.value == null }
                 .map { it.index }
-                .toSet()
+                .map { IndexedValue(it, MatchResult.Fail("no matching matchers found for ${actualElements[it]}")) }
+                .toList()
         return if (indexWithoutMatchers.isEmpty()) MatchResult.ok
-        else MatchResult.Fail("???")
+        else MatchResult.Fail(buildFailMessage(actualElements, indexWithoutMatchers))
     }
 
     private fun getNElementsLabel(n: Int) = "$n ${if (n > 1) "elements" else "element"}"
 
-    private class DifferentSize(val actualSize: Int) : Exception()
-
-    private fun <T> Iterable<T>.collectionSizeOrDefault(default: Int): Int = if (this is Collection<*>) this.size else default
-
-    private fun Iterator<*>.countRemaining(): Int {
-        var index = 0
-        this.forEach { ++index }
-        return index
-    }
-
-    private fun buildMatchingFailMessage(actual: Iterable<T>, matchErrors: List<IndexedValue<MatchResult.Fail>>) =
+    private fun buildFailMessage(actual: Iterable<T>, matchErrors: List<IndexedValue<MatchResult.Fail>>) =
             matchErrors.joinToString(
-                    prefix = "\"$actual\" does not match matchers:\n",
+                    prefix = "\"$actual\" contains not matched lines:\n",
                     separator = "\n",
                     transform = { pair -> " * @${pair.index}: ${pair.value.errorMessage}" })
 
