@@ -1,12 +1,12 @@
-group 'shoulk'
-version '1.0-SNAPSHOT'
+group 'io.github.neyb.shoulk'
+version '0.1-SNAPSHOT'
 
 task wrapper(type: Wrapper) {
-    gradleVersion = '3.2'
+    gradleVersion = '3.4'
 }
 
 buildscript {
-    ext.kotlinVersion = '1.0.6'
+    ext.kotlinVersion = '1.1.0'
 
     repositories {
         mavenCentral()
