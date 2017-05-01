@@ -1,29 +1,46 @@
-group 'io.github.neyb.shoulk'
-version '0.1-SNAPSHOT'
-
-task wrapper(type: Wrapper) {
-    gradleVersion = '3.4'
-}
-
 buildscript {
-    ext.kotlinVersion = '1.1.0'
+    ext.kotlinVersion = '1.1.2'
 
     repositories {
         mavenCentral()
     }
 
     dependencies {
-        classpath "org.jetbrains.kotlin:kotlin-gradle-plugin:$kotlinVersion"
         classpath "org.junit.platform:junit-platform-gradle-plugin:1.0.0-M2"
     }
 }
 
-apply plugin: 'kotlin'
+plugins {
+    id "com.jfrog.bintray" version "1.7.3"
+    id "org.jetbrains.kotlin.jvm" version "1.1.2"
+}
+
+group 'io.github.neyb.shoulk'
+version '0.1-SNAPSHOT'
+
+task wrapper(type: Wrapper) {
+    gradleVersion = '3.5'
+}
+
 apply plugin: 'org.junit.platform.gradle.plugin'
 
 junitPlatform {
     engines {
         include 'spek'
+    }
+}
+
+bintray {
+    user = bintrayUser
+    key = bintrayKey
+    pkg {
+        repo = 'maven'
+        name = project.name
+        licenses = ['Apache-2.0']
+        vcsUrl = 'https://github.com/neyb/shoulk.git'
+        version {
+            name = project.version
+        }
     }
 }
 

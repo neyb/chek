@@ -2,7 +2,7 @@ package io.github.neyb.shoulk.util
 
 import java.util.*
 
-fun List<Set<Int>>.removeDuplicateIndexes():List<Set<Int>> = Indexes(this).removeDuplicate().indexes
+fun List<Set<Int>>.removeDuplicateIndexes(): List<Set<Int>> = Indexes(this).removeDuplicate().indexes
 
 internal class Indexes(val indexes: List<Set<Int>>) {
     fun removeDuplicate(): Indexes {
@@ -37,20 +37,20 @@ internal class Indexes(val indexes: List<Set<Int>>) {
         val onlyPositionsToKeepIndexByIndex = HashMap<Int, Set<Int>>()
         for ((indexInInput, indexes) in toDeduplicate.withIndex()) {
             if (indexes.size == currentSizeCheck) {
-                var alreadyFoundTimes = foundTimesByIndexes[indexes]?:0
-                if (alreadyFoundTimes < currentSizeCheck){
-                    val positionsToKeepIndex = positionsToKeepIndexByIndexes.compute(indexes) { k, v ->
+                var alreadyFoundTimes = foundTimesByIndexes[indexes] ?: 0
+                if (alreadyFoundTimes < currentSizeCheck) {
+                    val positionsToKeepIndex: MutableSet<Int> = positionsToKeepIndexByIndexes.compute(indexes) { _, v ->
                         if (v == null)
                             mutableSetOf(indexInInput)
                         else {
                             v.add(indexInInput)
                             v
                         }
-                    }
-                    alreadyFoundTimes = foundTimesByIndexes.merge(indexes, 1) { presentValue, one -> presentValue + one}
+                    }!!
+                    alreadyFoundTimes = foundTimesByIndexes.merge(indexes, 1) { presentValue, one -> presentValue + one }!!
                     if (alreadyFoundTimes == currentSizeCheck) {
                         indexes.forEach {
-                            onlyPositionsToKeepIndexByIndex[it] = positionsToKeepIndex
+                            onlyPositionsToKeepIndexByIndex[it] = positionsToKeepIndex.toSet()
                         }
                     }
                 }

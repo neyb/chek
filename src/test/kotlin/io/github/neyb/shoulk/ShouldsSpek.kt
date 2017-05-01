@@ -137,6 +137,8 @@ class ShouldsSpek : Spek({
                 }
                 group("match in any order") {
                     list shouldMatchInAnyOrder listOf(
+                            equal("dog"),
+                            equal("cat")
 
                     )
                 }
