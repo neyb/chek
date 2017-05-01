@@ -16,17 +16,46 @@ plugins {
 }
 
 group 'io.github.neyb.shoulk'
-version '0.1-SNAPSHOT'
+version '0.1.0'
 
 task wrapper(type: Wrapper) {
     gradleVersion = '3.5'
 }
 
 apply plugin: 'org.junit.platform.gradle.plugin'
+apply plugin: 'maven-publish'
 
 junitPlatform {
     engines {
         include 'spek'
+    }
+}
+
+task sourcesJar(type: Jar, dependsOn: project.classes) {
+    from sourceSets.main.allSource
+}
+
+task javadocJar(type: Jar, dependsOn: project.javadoc) {
+    from javadoc.destinationDir
+}
+
+artifacts {
+    archives sourcesJar, javadocJar
+}
+
+publishing {
+    publications {
+        MyPublication(MavenPublication) {
+            from components.java
+
+            artifact sourcesJar {
+                classifier = 'sources'
+            }
+
+            artifact javadocJar {
+                classifier = 'javadoc'
+            }
+        }
     }
 }
 
@@ -43,6 +72,7 @@ bintray {
         }
     }
 }
+
 
 repositories {
     mavenCentral()
