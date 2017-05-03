@@ -57,8 +57,8 @@ publishing {
 }
 
 bintray {
-    user = bintrayUser?:"bintray user"
-    key = bintrayKey?:"bintray api key"
+    user = properties["bintrayUser"]?:"bintray user"
+    key = properties["bintrayKey"]?:"bintray api key"
     publications = ['maven']
     pkg {
         repo = 'maven'
