@@ -1,10 +1,21 @@
-# Shoulk
+# Shoulk [![Build Status](https://travis-ci.org/neyb/shoulk.svg?branch=master)](https://travis-ci.org/neyb/shoulk) [![Download](https://api.bintray.com/packages/neyb/maven/shoulk/images/download.svg?version=0.1.0)](https://bintray.com/neyb/maven/shoulk/0.1.0/link)
 
-Should is a fluent assertion library written in kotlin for kotlin ;P.
+Shoulk is a fluent assertion library written in kotlin for kotlin ;P.
 
 it is inspired by [Kluent](https://github.com/MarkusAmshove/Kluent)
 
-[![Build Status](https://travis-ci.org/neyb/shoulk.svg?branch=master)](https://travis-ci.org/neyb/shoulk)
+
+## gradle configuration
+
+```gradle
+repositories {
+    maven { url 'https://dl.bintray.com/neyb/maven' }
+}
+
+dependencies {
+    testCompile "io.github.neyb.shoulk:shoulk:0.1.0"
+}
+```
 
 ## Examples
 
